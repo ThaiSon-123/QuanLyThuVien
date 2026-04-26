@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <!-- Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:background="@drawable/bg_header_sach"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="12dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quay lại"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thêm sách"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Confirm button above bottom nav -->
+    <TextView
+        android:id="@+id/btnConfirm"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center"
+        android:text="Xác nhận"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_btn_confirm"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav" />
+
+    <!-- Form -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnConfirm">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="8dp">
+
+            <!-- Cover thumbnail picker -->
+            <ImageView
+                android:id="@+id/ivCover"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="14dp"
+                android:background="@drawable/bg_thumb_placeholder"
+                android:src="@drawable/ic_image_placeholder"
+                android:scaleType="centerCrop"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Chọn ảnh bìa" />
+
+            <!-- Tên sách -->
+            <TextView
+                android:id="@+id/lblTen"
+                style="@style/DetailLabel" />
+
+            <EditText
+                android:id="@+id/edtTen"
+                style="@style/DetailInput"
+                android:hint="Nhập tên sách"
+                android:inputType="textCapSentences" />
+
+            <!-- Thể loại -->
+            <TextView
+                android:id="@+id/lblTheLoai"
+                style="@style/DetailLabel" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_input_form">
+
+                <Spinner
+                    android:id="@+id/spinnerTheLoai"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="12dp"
+                    android:spinnerMode="dropdown" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_dropdown"
+                    android:contentDescription="Chọn" />
+            </FrameLayout>
+
+            <!-- Tác giả | Số lượng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lblTacGia"
+                        style="@style/DetailLabel" />
+
+                    <EditText
+                        android:id="@+id/edtTacGia"
+                        style="@style/DetailInput"
+                        android:inputType="textCapWords" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="12dp"
+                    android:layout_height="1dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lblSoLuong"
+                        style="@style/DetailLabel" />
+
+                    <EditText
+                        android:id="@+id/edtSoLuong"
+                        style="@style/DetailInput"
+                        android:inputType="number" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Nhà xuất bản -->
+            <TextView
+                android:id="@+id/lblNxb"
+                style="@style/DetailLabel" />
+
+            <EditText
+                android:id="@+id/edtNxb"
+                style="@style/DetailInput"
+                android:inputType="textCapWords" />
+
+            <!-- Năm xuất bản -->
+            <TextView
+                android:id="@+id/lblNamXb"
+                style="@style/DetailLabel" />
+
+            <EditText
+                android:id="@+id/edtNamXb"
+                style="@style/DetailInput"
+                android:inputType="number"
+                android:maxLength="4" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

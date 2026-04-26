@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Quản Lý Thư Viện</string>
+    <string name="app_title">QUẢN LÝ THƯ VIỆN</string>
+    <string name="label_username">Tên đăng nhập</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="label_forgot_password">Quên mật khẩu?</string>
+    <string name="btn_login">Đăng nhập</string>
+    <string name="msg_empty_fields">Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu</string>
+    <string name="msg_login_failed">Sai tên đăng nhập hoặc mật khẩu</string>
+    <string name="msg_login_success">Đăng nhập thành công</string>
+</resources>

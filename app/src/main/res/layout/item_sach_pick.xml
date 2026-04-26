@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/tvTen"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Sách ngữ văn lớp 6 tập 1"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+
+    <FrameLayout
+        android:id="@+id/btnAdd"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/bg_btn_add_circle"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="6dp"
+            android:src="@drawable/ic_plus"
+            android:contentDescription="Thêm" />
+    </FrameLayout>
+</LinearLayout>

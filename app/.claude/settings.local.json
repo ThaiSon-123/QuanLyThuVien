@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /tmp)",
+      "Bash(pandoc \"C:\\\\Users\\\\ASUS\\\\Downloads\\\\Nhom3_QuanLyThuVien \\(1\\).docx\" -o thuvien.md --track-changes=all)",
+      "Bash(where pandoc *)",
+      "Bash(where soffice *)",
+      "Bash(pip install *)",
+      "Bash(python -c ' *)",
+      "mcp__790cbb59-0954-4540-9bec-fecaa1a0fc2e__get_design_context",
+      "mcp__790cbb59-0954-4540-9bec-fecaa1a0fc2e__get_variable_defs",
+      "Bash(./gradlew assembleDebug)",
+      "mcp__790cbb59-0954-4540-9bec-fecaa1a0fc2e__get_screenshot",
+      "Bash(./gradlew.bat assembleDebug)"
+    ]
+  }
+}

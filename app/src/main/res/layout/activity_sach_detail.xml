@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <!-- Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:background="@drawable/bg_header_sach"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="12dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quay lại"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thông tin sách"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Action bar (sits above bottom nav) -->
+    <LinearLayout
+        android:id="@+id/actionBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorBackground"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav">
+
+        <TextView
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Xóa sách"
+            android:textColor="#E04D4D"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_btn_delete"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:layout_width="12dp"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/btnUpdate"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Cập nhật"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_btn_submit"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <!-- Form scroll -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/actionBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="8dp">
+
+            <!-- Thumbnails row -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ivThumbPlaceholder"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:padding="14dp"
+                    android:background="@drawable/bg_thumb_placeholder"
+                    android:src="@drawable/ic_image_placeholder"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Ảnh" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent" />
+
+                <ImageView
+                    android:id="@+id/ivThumbCover"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/bg_thumb_placeholder"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_book_placeholder"
+                    android:contentDescription="Bìa sách" />
+            </LinearLayout>
+
+            <!-- Tên sách -->
+            <TextView
+                android:id="@+id/lblTen"
+                style="@style/DetailLabel" />
+
+            <EditText
+                android:id="@+id/edtTen"
+                style="@style/DetailInput"
+                android:hint="Nhập tên sách"
+                android:inputType="textCapSentences" />
+
+            <!-- Thể loại -->
+            <TextView
+                android:id="@+id/lblTheLoai"
+                style="@style/DetailLabel" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_input_form">
+
+                <Spinner
+                    android:id="@+id/spinnerTheLoai"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="12dp"
+                    android:spinnerMode="dropdown" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_dropdown"
+                    android:contentDescription="Chọn" />
+            </FrameLayout>
+
+            <!-- Tác giả | Số lượng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lblTacGia"
+                        style="@style/DetailLabel" />
+
+                    <EditText
+                        android:id="@+id/edtTacGia"
+                        style="@style/DetailInput"
+                        android:inputType="textCapWords" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="12dp"
+                    android:layout_height="1dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lblSoLuong"
+                        style="@style/DetailLabel" />
+
+                    <EditText
+                        android:id="@+id/edtSoLuong"
+                        style="@style/DetailInput"
+                        android:inputType="number" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Nhà xuất bản -->
+            <TextView
+                android:id="@+id/lblNxb"
+                style="@style/DetailLabel" />
+
+            <EditText
+                android:id="@+id/edtNxb"
+                style="@style/DetailInput"
+                android:inputType="textCapWords" />
+
+            <!-- Năm xuất bản -->
+            <TextView
+                android:id="@+id/lblNamXb"
+                style="@style/DetailLabel" />
+
+            <EditText
+                android:id="@+id/edtNamXb"
+                style="@style/DetailInput"
+                android:inputType="number"
+                android:maxLength="4" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

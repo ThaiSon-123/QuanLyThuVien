@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="10dp"
+    android:background="@drawable/bg_phieu_card"
+    android:clickable="true"
+    android:focusable="true">
+
+    <FrameLayout
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_phieu_icon">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="6dp"
+            android:src="@drawable/ic_clipboard_list"
+            android:contentDescription="Phiếu" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvMaPhieu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PM-123"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvSubLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12/03/2021 · 2 quyển"
+            android:textColor="#4B4B4B"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
+        android:text="Chưa trả"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textColor="#B9651A"
+        android:background="@drawable/bg_status_chuatra"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="›"
+        android:textColor="#9AA3AE"
+        android:textSize="20sp" />
+</LinearLayout>
