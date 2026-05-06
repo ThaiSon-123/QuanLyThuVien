@@ -7,10 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Truy vấn thống kê cho màn Báo cáo. */
+
 public class BaoCaoDao {
 
-    /** Một dòng thống kê: id (nếu có), tên, số lượt. Dùng chung cho mọi loại báo cáo. */
     public static class TheLoaiStat {
         public int tlId;
         public String ten;
@@ -23,7 +22,6 @@ public class BaoCaoDao {
         this.helper = DatabaseHelper.getInstance(context);
     }
 
-    /** Tổng số lượt mượn (= số phiếu mượn) trong tháng yyyyMM ("2021-03"). */
     public int totalLuotMuonInMonth(String yyyyMM) {
         SQLiteDatabase db = helper.getReadableDatabase();
         try (Cursor c = db.rawQuery(
@@ -34,10 +32,7 @@ public class BaoCaoDao {
         return 0;
     }
 
-    /**
-     * Số lượt mượn theo từng thể loại trong tháng — count(distinct pm_id)
-     * cho mỗi thể loại có ít nhất 1 sách trong phiếu mượn của tháng.
-     */
+
     public List<TheLoaiStat> luotMuonByTheLoaiInMonth(String yyyyMM) {
         List<TheLoaiStat> list = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -61,7 +56,6 @@ public class BaoCaoDao {
         return list;
     }
 
-    /** Top sách được mượn nhiều nhất trong tháng (chỉ liệt kê sách có ít nhất 1 lượt). */
     public List<TheLoaiStat> topSachInMonth(String yyyyMM) {
         List<TheLoaiStat> list = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -85,7 +79,6 @@ public class BaoCaoDao {
         return list;
     }
 
-    /** Top bạn đọc mượn nhiều nhất trong tháng. */
     public List<TheLoaiStat> topBanDocInMonth(String yyyyMM) {
         List<TheLoaiStat> list = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -108,7 +101,6 @@ public class BaoCaoDao {
         return list;
     }
 
-    /** Số phiếu mượn ĐÃ trả trong tháng. */
     public int countDaTraInMonth(String yyyyMM) {
         SQLiteDatabase db = helper.getReadableDatabase();
         String sql = "SELECT COUNT(*) FROM PhieuMuon pm " +
@@ -120,7 +112,6 @@ public class BaoCaoDao {
         return 0;
     }
 
-    /** Số phiếu mượn CHƯA trả trong tháng. */
     public int countChuaTraInMonth(String yyyyMM) {
         SQLiteDatabase db = helper.getReadableDatabase();
         String sql = "SELECT COUNT(*) FROM PhieuMuon pm " +

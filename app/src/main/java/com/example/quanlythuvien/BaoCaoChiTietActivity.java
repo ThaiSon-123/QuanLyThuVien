@@ -33,7 +33,7 @@ public class BaoCaoChiTietActivity extends AppCompatActivity {
     public static final String TYPE_BY_SACH = "by_sach";
     /** Top bạn đọc. */
     public static final String TYPE_BY_BANDOC = "by_bandoc";
-    /** Tình hình trả: 2 dòng đã trả / chưa trả. */
+    /** Tình hình trả: đã trả / chưa trả. */
     public static final String TYPE_TRA_STATUS = "tra_status";
 
     private BaoCaoDao baoCaoDao;

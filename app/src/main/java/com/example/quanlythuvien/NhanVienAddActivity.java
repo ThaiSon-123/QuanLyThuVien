@@ -117,7 +117,6 @@ public class NhanVienAddActivity extends AppCompatActivity {
             edtChucVu.setText(current.chucvu);
             edtDiaChi.setText(current.diachi);
 
-            // Mật khẩu không cần khi sửa — ẩn cho gọn
             lblPassword.setVisibility(View.GONE);
             edtPassword.setVisibility(View.GONE);
         } else {

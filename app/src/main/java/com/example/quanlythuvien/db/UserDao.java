@@ -19,7 +19,6 @@ public class UserDao {
         public int status;
     }
 
-    /** Lấy tên nhân viên gắn với username (qua bảng NhanVien); null nếu không có. */
     public String findStaffName(String username) {
         SQLiteDatabase db = helper.getReadableDatabase();
         String sql = "SELECT nv.ten FROM NhanVien nv " +

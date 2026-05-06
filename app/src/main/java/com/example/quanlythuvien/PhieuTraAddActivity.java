@@ -90,7 +90,6 @@ public class PhieuTraAddActivity extends AppCompatActivity {
         });
         findViewById(R.id.btnConfirm).setOnClickListener(v -> onConfirm());
 
-        // Khi user bấm vào field "Số hiệu phiếu (Trả)" rỗng → scroll xuống list để hướng dẫn
         tvMaPhieuMuon.setOnClickListener(v -> {
             if (currentPm == null) {
                 Toast.makeText(this, "Chọn 1 phiếu mượn ở danh sách bên dưới",
@@ -133,7 +132,6 @@ public class PhieuTraAddActivity extends AppCompatActivity {
     }
 
     private void onPickPhieuMuon(PhieuMuon p) {
-        // Nạp lại với chi tiết đầy đủ
         currentPm = phieuMuonDao.findById(p.pmId);
         if (currentPm == null) {
             Toast.makeText(this, "Không tìm thấy phiếu", Toast.LENGTH_SHORT).show();

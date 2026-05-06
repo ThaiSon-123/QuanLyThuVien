@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tvGreeting = findViewById(R.id.tvGreeting);
         TextView tvUserName = findViewById(R.id.tvUserName);
 
-        // Greeting động theo giờ
+
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String hello;
         if (hour < 12) hello = "Chào buổi sáng 👋";
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         else hello = "Chào buổi tối 👋";
         tvGreeting.setText(hello);
 
-        // Tên nhân viên: tra NhanVien theo username; fallback về username
+
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, MODE_PRIVATE);
         String username = prefs.getString(LoginActivity.KEY_USERNAME, "");
         String displayName = new UserDao(this).findStaffName(username);

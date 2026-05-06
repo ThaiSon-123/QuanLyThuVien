@@ -34,7 +34,6 @@ public class BanDocActivity extends AppCompatActivity {
     private TextView tvDangMuon;
     private TextView tvEmpty;
 
-    // Search
     private TextView tvTitle;
     private ImageView btnSearch;
     private LinearLayout headerSearch;
@@ -122,7 +121,6 @@ public class BanDocActivity extends AppCompatActivity {
         applyFilter();
     }
 
-    /** Chuẩn hóa: bỏ dấu tiếng Việt, lowercase. */
     private static String norm(String s) {
         if (s == null) return "";
         String nfd = Normalizer.normalize(s.toLowerCase().trim(), Normalizer.Form.NFD);

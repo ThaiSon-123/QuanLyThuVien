@@ -35,7 +35,6 @@ public class LienHeActivity extends AppCompatActivity {
     private TextView tvCount;
     private TextView tvEmpty;
 
-    /** Toàn bộ danh sách (chưa filter). */
     private List<BanDoc> allList = new ArrayList<>();
 
     @Override
@@ -108,7 +107,6 @@ public class LienHeActivity extends AppCompatActivity {
         applyFilter(edtSearch.getText().toString());
     }
 
-    /** Chuẩn hóa: bỏ dấu tiếng Việt, lowercase. */
     private static String norm(String s) {
         if (s == null) return "";
         String nfd = Normalizer.normalize(s.toLowerCase().trim(), Normalizer.Form.NFD);

@@ -40,12 +40,6 @@ public class NhanVienDao {
         return null;
     }
 
-    /**
-     * Tạo Users + NhanVien trong 1 transaction.
-     * @param username thường là email; required nếu password != null.
-     * @param password optional; nếu null thì không tạo Users.
-     * @return nv_id mới, -1 nếu fail.
-     */
     public long insertWithUser(NhanVien nv, String username, String password) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();

@@ -30,9 +30,6 @@ public class BanDocDao {
         return list;
     }
 
-    /**
-     * Liệt kê kèm số sách đang giữ (sum soluong các phiếu mượn chưa trả).
-     */
     public List<BanDoc> listWithStats() {
         List<BanDoc> list = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();

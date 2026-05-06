@@ -51,7 +51,6 @@ public class MuonTraActivity extends AppCompatActivity {
     private View indicatorMuon;
     private View indicatorTra;
 
-    // Search & Filter
     private TextView tvTitle;
     private ImageView btnSearch;
     private ImageView btnFilter;
@@ -155,7 +154,6 @@ public class MuonTraActivity extends AppCompatActivity {
         applyFilter();
     }
 
-    /** Chuẩn hóa: bỏ dấu tiếng Việt, lowercase. */
     private static String norm(String s) {
         if (s == null) return "";
         String nfd = Normalizer.normalize(s.toLowerCase().trim(), Normalizer.Form.NFD);
@@ -171,7 +169,7 @@ public class MuonTraActivity extends AppCompatActivity {
             if (currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus)) {
                 if (!currentStatus.equals(r.status)) continue;
             }
-            // Lọc keyword không dấu
+
             if (!kw.isEmpty() && !norm(r.ma).contains(kw) && !norm(r.tenBanDoc).contains(kw)) {
                 continue;
             }
@@ -184,7 +182,7 @@ public class MuonTraActivity extends AppCompatActivity {
         tvEmpty.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
         tvEmpty.setText(hasFilter ? "Không tìm thấy kết quả"
                 : (currentTab == TAB_MUON ? "Chưa có phiếu mượn" : "Chưa có phiếu trả"));
-        // Đổi màu icon filter khi đang có lọc trạng thái
+
         if (btnFilter != null) {
             boolean filterActive = currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus);
             btnFilter.setColorFilter(filterActive ? 0xFFFFD700 : 0xFFFFFFFF, PorterDuff.Mode.SRC_IN);
@@ -192,7 +190,7 @@ public class MuonTraActivity extends AppCompatActivity {
     }
 
     private void showFilterDialog() {
-        // Xây RadioGroup lọc trạng thái
+
         RadioGroup rg = new RadioGroup(this);
         rg.setOrientation(RadioGroup.VERTICAL);
         int padding = (int) (16 * getResources().getDisplayMetrics().density);
@@ -299,7 +297,7 @@ public class MuonTraActivity extends AppCompatActivity {
 
         tvFabLabel.setText(muon ? "Lập phiếu mượn" : "Lập phiếu trả");
 
-        // Bộ lọc trạng thái chỉ có ý nghĩa với Phiếu Mượn
+
         btnFilter.setVisibility(muon ? View.VISIBLE : View.GONE);
         if (!muon) currentStatus = STATUS_ALL; // reset khi sang tab Trả
 
@@ -343,17 +341,14 @@ public class MuonTraActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * So sánh ngày trả thực tế với hạn trả.
-     * @return "dunghạn" nếu trả đúng/trước hạn, "trehan" nếu trễ.
-     */
+
     private static String tinhTrangTra(String ngayTraThucTe, String ngayHanTra) {
         if (ngayTraThucTe == null || ngayHanTra == null) return "dunghạn";
-        // So sánh chuỗi yyyy-MM-dd được rồi (ISO format so sánh đúng thứ tự)
+
         return ngayTraThucTe.compareTo(ngayHanTra) <= 0 ? "dunghạn" : "trehan";
     }
 
-    /** yyyy-MM-dd → dd/MM/yyyy (robust với null hoặc format khác). */
+
     public static String formatDate(String iso) {
         if (iso == null || iso.isEmpty()) return "";
         try {

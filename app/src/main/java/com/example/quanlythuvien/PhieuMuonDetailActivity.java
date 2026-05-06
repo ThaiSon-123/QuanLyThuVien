@@ -130,7 +130,7 @@ public class PhieuMuonDetailActivity extends AppCompatActivity {
         tvHanTra.setText(MuonTraActivity.formatDate(pm.ngayTra));
         ctAdapter.submit(pm.chiTiet);
 
-        // Nút Lập phiếu trả / Xem phiếu trả
+
         linkedPtId = phieuTraDao.findIdByPmId(pmId);
         if (linkedPtId > 0) {
             btnTraPhieu.setText("Xem phiếu trả");

@@ -88,10 +88,6 @@ public class PhieuTraDao {
         return 0;
     }
 
-    /**
-     * Insert PhieuTra + ChiTietTra. Trigger trg_tra_sach tự cộng Sach.soluong.
-     * @return pt_id mới, hoặc -1 nếu fail.
-     */
     public long insertWithDetails(int pmId, String ngayTra, java.util.List<ChiTietMuon> details) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();

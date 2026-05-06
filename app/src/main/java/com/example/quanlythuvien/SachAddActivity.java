@@ -53,7 +53,7 @@ public class SachAddActivity extends AppCompatActivity {
                     getContentResolver().takePersistableUriPermission(uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 } catch (SecurityException ignored) {
-                    // Some providers don't support persistable grants — still usable this session.
+
                 }
                 selectedCoverUri = uri;
                 ivCover.setPadding(0, 0, 0, 0);

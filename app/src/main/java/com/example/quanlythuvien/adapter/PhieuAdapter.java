@@ -15,7 +15,6 @@ import com.example.quanlythuvien.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Dùng chung cho cả Phiếu Mượn & Phiếu Trả. */
 public class PhieuAdapter extends RecyclerView.Adapter<PhieuAdapter.VH> {
 
     public static class Row {
@@ -23,9 +22,8 @@ public class PhieuAdapter extends RecyclerView.Adapter<PhieuAdapter.VH> {
         public final String ma;
         public final String tenBanDoc;
         public final String ngay;
-        /** Nullable — nếu != null thì hiện subline "TRẢ CHO: ...". */
         public final String traCho;
-        /** Nullable — "datra" hoặc "chuatra" để hiện pill trạng thái. */
+
         public final String status;
 
         public Row(int id, String ma, String tenBanDoc, String ngay) {

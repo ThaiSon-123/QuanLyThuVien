@@ -117,7 +117,6 @@ public class TheLoaiEditActivity extends AppCompatActivity {
                 finish();
                 return;
             }
-            // Edit mode
             tvTitle.setText("Chỉnh sửa thể loại");
             btnSubmit.setText("Cập nhật");
             btnDelete.setVisibility(View.VISIBLE);
@@ -134,7 +133,6 @@ public class TheLoaiEditActivity extends AppCompatActivity {
                 }
             }
         } else {
-            // Add mode
             tvTitle.setText("Thêm thể loại");
             btnSubmit.setText("Xác nhận");
             btnDelete.setVisibility(View.GONE);
@@ -200,7 +198,7 @@ public class TheLoaiEditActivity extends AppCompatActivity {
         if (rows > 0) {
             Toast.makeText(this, "Đã xóa thể loại", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
-            // Close parent detail screen too by returning to the list
+
             Intent i = new Intent(this, SachActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(i);

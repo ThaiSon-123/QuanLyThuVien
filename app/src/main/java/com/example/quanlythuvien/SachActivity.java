@@ -51,10 +51,8 @@ public class SachActivity extends AppCompatActivity {
     private RecyclerView rvSach;
     private RecyclerView rvTheLoai;
 
-    // Normal header
     private TextView tvTitle;
     private ImageView btnSearch;
-    // Search header
     private LinearLayout headerSearch;
     private EditText edtSearch;
     private ImageView btnClearSearch;
@@ -215,16 +213,16 @@ public class SachActivity extends AppCompatActivity {
         indicatorAll.setBackgroundResource(all ? R.drawable.bg_tab_indicator : android.R.color.transparent);
         indicatorCategory.setBackgroundResource(all ? android.R.color.transparent : R.drawable.bg_tab_indicator);
 
-        // Swap list visibility
+
         rvSach.setVisibility(all ? View.VISIBLE : View.GONE);
         rvTheLoai.setVisibility(all ? View.GONE : View.VISIBLE);
 
-        // Swap header actions — search + filter only make sense on tab "Tất cả"
+
         btnSearch.setVisibility(all && !searchMode ? View.VISIBLE : View.GONE);
         btnFilter.setVisibility(all ? View.VISIBLE : View.GONE);
         if (!all && searchMode) exitSearchMode();
 
-        // FAB label
+
         tvFabLabel.setText(all ? "Thêm sách" : "Thêm thể loại");
 
         if (all) {
@@ -234,7 +232,6 @@ public class SachActivity extends AppCompatActivity {
         }
     }
 
-    /** Chuẩn hóa: bỏ dấu tiếng Việt, lowercase. */
     private static String norm(String s) {
         if (s == null) return "";
         String nfd = Normalizer.normalize(s.toLowerCase().trim(), Normalizer.Form.NFD);
@@ -243,7 +240,6 @@ public class SachActivity extends AppCompatActivity {
     }
 
     private void applyFilter() {
-        // SQL lọc theo status + thể loại; keyword lọc client-side để hỗ trợ không dấu
         List<Sach> all = sachDao.filter(null, currentStatus, currentTlId);
         List<Sach> list;
         if (currentKeyword.trim().isEmpty()) {
@@ -290,13 +286,13 @@ public class SachActivity extends AppCompatActivity {
         RadioGroup rgStatus = view.findViewById(R.id.rgStatus);
         RadioGroup rgTheLoai = view.findViewById(R.id.rgTheLoai);
 
-        // Preselect status
+
         int statusChecked = R.id.rbStatusAll;
         if (STATUS_CON.equals(currentStatus)) statusChecked = R.id.rbStatusCon;
         else if (STATUS_HET.equals(currentStatus)) statusChecked = R.id.rbStatusHet;
         rgStatus.check(statusChecked);
 
-        // Build thể loại radio buttons dynamically
+
         List<TheLoai> theLoaiList = new ArrayList<>();
         theLoaiList.add(new TheLoai(0, "Tất cả"));
         theLoaiList.addAll(theLoaiDao.listAll());

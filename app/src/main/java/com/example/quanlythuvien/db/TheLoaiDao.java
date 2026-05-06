@@ -30,7 +30,7 @@ public class TheLoaiDao {
         return list;
     }
 
-    /** Danh sách kèm số lượng đầu sách của mỗi thể loại (DISTINCT sach_id). */
+
     public List<TheLoai> listWithCount() {
         List<TheLoai> list = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();

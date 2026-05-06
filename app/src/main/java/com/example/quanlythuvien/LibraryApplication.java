@@ -16,16 +16,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/**
- * Application class — apply status bar inset cho mọi activity tự động
- * (do Android 15+ ép edge-to-edge khi targetSdk >= 35).
- *
- * Tìm view id `header` hoặc `topBar` ở mỗi activity → set paddingTop = status bar inset
- * và bù chiều cao tương ứng để nội dung header không bị thu nhỏ.
- */
+
 public class LibraryApplication extends Application {
 
-    /** Track view → original height đã ghi nhận lần đầu, tránh cộng dồn khi re-apply. */
     private static final Map<View, Integer> ORIG_HEIGHTS =
             Collections.synchronizedMap(new WeakHashMap<>());
 
@@ -51,7 +44,6 @@ public class LibraryApplication extends Application {
     }
 
     private static void attachInsetListener(final View header) {
-        // Ghi nhớ chiều cao gốc (chỉ 1 lần) để tránh cộng dồn padding khi resume nhiều lần.
         if (!ORIG_HEIGHTS.containsKey(header)) {
             ORIG_HEIGHTS.put(header, header.getLayoutParams() != null
                     ? header.getLayoutParams().height : ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -74,7 +66,6 @@ public class LibraryApplication extends Application {
         ViewCompat.requestApplyInsets(header);
     }
 
-    /** Helper interface để khỏi override 7 callback. */
     private interface SimpleLifecycleCallbacks extends ActivityLifecycleCallbacks {
         @Override default void onActivityCreated(@NonNull Activity a, @Nullable Bundle b) {}
         @Override default void onActivityStarted(@NonNull Activity a) {}

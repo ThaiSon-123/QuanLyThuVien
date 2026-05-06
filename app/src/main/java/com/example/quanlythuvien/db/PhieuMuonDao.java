@@ -79,11 +79,6 @@ public class PhieuMuonDao {
         return list;
     }
 
-    /**
-     * Insert PhieuMuon + danh sách ChiTietMuon trong 1 transaction.
-     * Trigger trg_muon_sach sẽ tự trừ Sach.soluong.
-     * @return pm_id mới, hoặc -1 nếu fail.
-     */
     public long insertWithDetails(PhieuMuon pm, java.util.List<ChiTietMuon> details) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();
@@ -112,7 +107,6 @@ public class PhieuMuonDao {
         }
     }
 
-    /** Pm_id kế tiếp dự kiến (max + 1) — chỉ để hiển thị preview. */
     public int previewNextId() {
         SQLiteDatabase db = helper.getReadableDatabase();
         try (Cursor c = db.rawQuery("SELECT IFNULL(MAX(pm_id),0)+1 FROM PhieuMuon", null)) {
@@ -121,7 +115,6 @@ public class PhieuMuonDao {
         return 1;
     }
 
-    /** Lịch sử mượn của 1 bạn đọc + số quyển mỗi phiếu. */
     public java.util.List<PhieuMuon> listByBanDoc(int bdId) {
         java.util.List<PhieuMuon> list = new java.util.ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -144,7 +137,6 @@ public class PhieuMuonDao {
         return list;
     }
 
-    /** Phiếu mượn chưa trả — để chọn khi lập phiếu trả. */
     public java.util.List<PhieuMuon> listChuaTra() {
         java.util.List<PhieuMuon> list = new java.util.ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();

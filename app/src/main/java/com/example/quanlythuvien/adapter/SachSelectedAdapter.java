@@ -15,11 +15,6 @@ import com.example.quanlythuvien.model.ChiTietMuon;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Hiển thị các sách đã chọn vào phiếu.
- * - mode = MODE_BORROW (chi tiết phiếu mượn): hiển thị "xN" + nút xóa.
- * - mode = MODE_RETURN (sách đã mượn của phiếu trả): hiển thị "Số lượng N" màu xanh lá.
- */
 public class SachSelectedAdapter extends RecyclerView.Adapter<SachSelectedAdapter.VH> {
 
     public static final int MODE_BORROW = 0;
