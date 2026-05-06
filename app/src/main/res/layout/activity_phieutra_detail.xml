@@ -88,9 +88,36 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Ngày tạo: 12/03/2021"
+                    android:text="Ngày trả: 12/03/2026"
                     android:textColor="#4B4B4B"
                     android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvHanTra"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hạn trả: 12/03/2026"
+                        android:textColor="#4B4B4B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvTinhTrang"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="2dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <!-- Bạn đọc -->
                 <LinearLayout
@@ -205,6 +232,7 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

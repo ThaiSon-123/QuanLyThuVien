@@ -1,12 +1,20 @@
 package com.example.quanlythuvien;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.text.Normalizer;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,14 +45,29 @@ public class MuonTraActivity extends AppCompatActivity {
 
     private TextView tvCount;
     private TextView tvEmpty;
-    private TextView tvDate;
     private TextView tvFabLabel;
     private TextView tvTabMuon;
     private TextView tvTabTra;
     private View indicatorMuon;
     private View indicatorTra;
 
+    // Search & Filter
+    private TextView tvTitle;
+    private ImageView btnSearch;
+    private ImageView btnFilter;
+    private LinearLayout headerSearch;
+    private EditText edtSearch;
+    private ImageView btnClearSearch;
+
+    private static final String STATUS_ALL      = "all";
+    private static final String STATUS_DANGMUON = "dangmuon";
+    private static final String STATUS_DATRA    = "datra";
+
     private int currentTab = TAB_MUON;
+    private boolean searchMode = false;
+    private String currentKeyword = "";
+    private String currentStatus = STATUS_ALL;
+    private List<PhieuAdapter.Row> allRows = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +80,10 @@ public class MuonTraActivity extends AppCompatActivity {
         bindViews();
         setupRecycler();
         setupHeader();
+        setupSearchHeader();
         setupTabs();
         setupFab();
         setupBottomNav();
-
-        // Hôm nay — chỉ hiển thị
-        tvDate.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                .format(new Date()));
 
         selectTab(TAB_MUON);
     }
@@ -71,12 +91,17 @@ public class MuonTraActivity extends AppCompatActivity {
     private void bindViews() {
         tvCount = findViewById(R.id.tvCount);
         tvEmpty = findViewById(R.id.tvEmpty);
-        tvDate = findViewById(R.id.tvDate);
         tvFabLabel = findViewById(R.id.tvFabLabel);
         tvTabMuon = findViewById(R.id.tvTabMuon);
         tvTabTra = findViewById(R.id.tvTabTra);
         indicatorMuon = findViewById(R.id.indicatorMuon);
         indicatorTra = findViewById(R.id.indicatorTra);
+        tvTitle = findViewById(R.id.tvTitle);
+        btnSearch = findViewById(R.id.btnSearch);
+        btnFilter = findViewById(R.id.btnFilter);
+        headerSearch = findViewById(R.id.headerSearch);
+        edtSearch = findViewById(R.id.edtSearch);
+        btnClearSearch = findViewById(R.id.btnClearSearch);
     }
 
     private void setupRecycler() {
@@ -88,9 +113,134 @@ public class MuonTraActivity extends AppCompatActivity {
 
     private void setupHeader() {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        ImageView btnSearch = findViewById(R.id.btnSearch);
-        btnSearch.setOnClickListener(v ->
-                Toast.makeText(this, "Tìm kiếm đang phát triển", Toast.LENGTH_SHORT).show());
+        btnSearch.setOnClickListener(v -> enterSearchMode());
+        btnFilter.setOnClickListener(v -> showFilterDialog());
+    }
+
+    private void setupSearchHeader() {
+        findViewById(R.id.btnSearchBack).setOnClickListener(v -> exitSearchMode());
+        btnClearSearch.setOnClickListener(v -> edtSearch.setText(""));
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                String kw = s.toString();
+                btnClearSearch.setVisibility(kw.isEmpty() ? View.GONE : View.VISIBLE);
+                currentKeyword = kw;
+                applyFilter();
+            }
+        });
+    }
+
+    private void enterSearchMode() {
+        searchMode = true;
+        tvTitle.setVisibility(View.GONE);
+        btnSearch.setVisibility(View.GONE);
+        headerSearch.setVisibility(View.VISIBLE);
+        edtSearch.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (imm != null) imm.showSoftInput(edtSearch, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void exitSearchMode() {
+        searchMode = false;
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(edtSearch.getWindowToken(), 0);
+        edtSearch.setText("");
+        currentKeyword = "";
+        headerSearch.setVisibility(View.GONE);
+        tvTitle.setVisibility(View.VISIBLE);
+        btnSearch.setVisibility(View.VISIBLE);
+        applyFilter();
+    }
+
+    /** Chuẩn hóa: bỏ dấu tiếng Việt, lowercase. */
+    private static String norm(String s) {
+        if (s == null) return "";
+        String nfd = Normalizer.normalize(s.toLowerCase().trim(), Normalizer.Form.NFD);
+        return nfd.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                  .replace('đ', 'd').replace('Đ', 'd');
+    }
+
+    private void applyFilter() {
+        String kw = norm(currentKeyword);
+        List<PhieuAdapter.Row> filtered = new ArrayList<>();
+        for (PhieuAdapter.Row r : allRows) {
+            // Lọc trạng thái (chỉ áp dụng cho tab Phiếu Mượn)
+            if (currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus)) {
+                if (!currentStatus.equals(r.status)) continue;
+            }
+            // Lọc keyword không dấu
+            if (!kw.isEmpty() && !norm(r.ma).contains(kw) && !norm(r.tenBanDoc).contains(kw)) {
+                continue;
+            }
+            filtered.add(r);
+        }
+        adapter.submit(filtered);
+        String label = currentTab == TAB_MUON ? " Phiếu mượn" : " Phiếu trả";
+        tvCount.setText(filtered.size() + label);
+        boolean hasFilter = !kw.isEmpty() || (currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus));
+        tvEmpty.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
+        tvEmpty.setText(hasFilter ? "Không tìm thấy kết quả"
+                : (currentTab == TAB_MUON ? "Chưa có phiếu mượn" : "Chưa có phiếu trả"));
+        // Đổi màu icon filter khi đang có lọc trạng thái
+        if (btnFilter != null) {
+            boolean filterActive = currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus);
+            btnFilter.setColorFilter(filterActive ? 0xFFFFD700 : 0xFFFFFFFF, PorterDuff.Mode.SRC_IN);
+        }
+    }
+
+    private void showFilterDialog() {
+        // Xây RadioGroup lọc trạng thái
+        RadioGroup rg = new RadioGroup(this);
+        rg.setOrientation(RadioGroup.VERTICAL);
+        int padding = (int) (16 * getResources().getDisplayMetrics().density);
+        rg.setPadding(padding, padding, padding, 0);
+
+        String[][] options = {
+                {STATUS_ALL,      "Tất cả"},
+                {STATUS_DANGMUON, "Đang mượn"},
+                {STATUS_DATRA,    "Đã trả"}
+        };
+        int checkedId = -1;
+        int[] ids = new int[options.length];
+        for (int i = 0; i < options.length; i++) {
+            RadioButton rb = new RadioButton(this);
+            rb.setId(View.generateViewId());
+            rb.setText(options[i][1]);
+            rb.setTextSize(15f);
+            rb.setPadding(8, 12, 8, 12);
+            ids[i] = rb.getId();
+            rg.addView(rb);
+            if (options[i][0].equals(currentStatus)) checkedId = rb.getId();
+        }
+        if (checkedId != -1) rg.check(checkedId);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Lọc theo trạng thái")
+                .setView(rg)
+                .setPositiveButton("Áp dụng", null)
+                .setNegativeButton("Đặt lại", null)
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(b -> {
+                int sel = rg.getCheckedRadioButtonId();
+                currentStatus = STATUS_ALL;
+                for (int i = 0; i < options.length; i++) {
+                    if (ids[i] == sel) { currentStatus = options[i][0]; break; }
+                }
+                applyFilter();
+                dialog.dismiss();
+            });
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(b -> {
+                currentStatus = STATUS_ALL;
+                applyFilter();
+                dialog.dismiss();
+            });
+        });
+        dialog.show();
     }
 
     private void setupTabs() {
@@ -149,15 +299,19 @@ public class MuonTraActivity extends AppCompatActivity {
 
         tvFabLabel.setText(muon ? "Lập phiếu mượn" : "Lập phiếu trả");
 
+        // Bộ lọc trạng thái chỉ có ý nghĩa với Phiếu Mượn
+        btnFilter.setVisibility(muon ? View.VISIBLE : View.GONE);
+        if (!muon) currentStatus = STATUS_ALL; // reset khi sang tab Trả
+
         loadData();
     }
 
     private void loadData() {
-        List<PhieuAdapter.Row> rows = new ArrayList<>();
+        allRows = new ArrayList<>();
         if (currentTab == TAB_MUON) {
             List<PhieuMuon> list = phieuMuonDao.listAll();
             for (PhieuMuon p : list) {
-                rows.add(new PhieuAdapter.Row(
+                allRows.add(new PhieuAdapter.Row(
                         p.pmId,
                         p.getMaPhieu(),
                         p.tenBanDoc,
@@ -165,22 +319,20 @@ public class MuonTraActivity extends AppCompatActivity {
                         null,
                         p.trangthai));
             }
-            tvCount.setText(list.size() + " Phiếu mượn");
         } else {
             List<PhieuTra> list = phieuTraDao.listAll();
             for (PhieuTra p : list) {
-                rows.add(new PhieuAdapter.Row(
+                String tinhTrang = tinhTrangTra(p.ngayTra, p.ngayHanTra);
+                allRows.add(new PhieuAdapter.Row(
                         p.ptId,
                         p.getMaPhieu(),
                         p.tenBanDoc,
                         formatDate(p.ngayTra),
-                        "PM-" + p.pmId));
+                        "PM-" + p.pmId,
+                        tinhTrang));
             }
-            tvCount.setText(list.size() + " Phiếu trả");
         }
-        adapter.submit(rows);
-        tvEmpty.setVisibility(rows.isEmpty() ? View.VISIBLE : View.GONE);
-        tvEmpty.setText(currentTab == TAB_MUON ? "Chưa có phiếu mượn" : "Chưa có phiếu trả");
+        applyFilter();
     }
 
     private void onRowClick(PhieuAdapter.Row row) {
@@ -189,6 +341,16 @@ public class MuonTraActivity extends AppCompatActivity {
         } else {
             startActivity(PhieuTraDetailActivity.newIntent(this, row.id));
         }
+    }
+
+    /**
+     * So sánh ngày trả thực tế với hạn trả.
+     * @return "dunghạn" nếu trả đúng/trước hạn, "trehan" nếu trễ.
+     */
+    private static String tinhTrangTra(String ngayTraThucTe, String ngayHanTra) {
+        if (ngayTraThucTe == null || ngayHanTra == null) return "dunghạn";
+        // So sánh chuỗi yyyy-MM-dd được rồi (ISO format so sánh đúng thứ tự)
+        return ngayTraThucTe.compareTo(ngayHanTra) <= 0 ? "dunghạn" : "trehan";
     }
 
     /** yyyy-MM-dd → dd/MM/yyyy (robust với null hoặc format khác). */
@@ -226,6 +388,15 @@ public class MuonTraActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (searchMode) {
+            exitSearchMode();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

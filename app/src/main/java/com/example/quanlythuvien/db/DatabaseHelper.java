@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "quanlythuvien.db";
-    public static final int DB_VERSION = 6;
+    public static final int DB_VERSION = 7;
 
     private static DatabaseHelper instance;
 
@@ -151,52 +151,94 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void seedData(SQLiteDatabase db) {
+        // ── Users ──────────────────────────────────────────────────────────────
         db.execSQL("INSERT INTO Users (username, password, role) VALUES " +
                 "('admin', '123', 'admin'), " +
-                "('nv1', '123', 'nhanvien'), " +
-                "('nv2', '123', 'nhanvien')");
+                "('nv1',   '123', 'nhanvien'), " +
+                "('nv2',   '123', 'nhanvien')");
 
+        // ── Nhân viên ──────────────────────────────────────────────────────────
         db.execSQL("INSERT INTO NhanVien (ten, sdt, email, diachi, chucvu, ngay_vao_lam, user_id) VALUES " +
-                "('Võ Thái Sơn', '0123457678', 'son@thuvien.com', 'HÀ NỘI', 'Quản lý', '2025-01-15', 1), " +
-                "('Đinh Sỹ Vinh', '0123456678', 'vinh@thuvien.com', 'ĐÀ NẴNG', 'Nhân viên', '2025-06-01', 2), " +
-                "('Nguyễn Trọng Hiếu', '0356602342', 'Hieu@thuvien.com', 'TP.HCM', 'Nhân viên', '2026-01-20', 3)");
+                "('Võ Thái Sơn',       '0123457678', 'son@thuvien.com',  'Hà Nội',    'Quản lý',   '2025-01-15', 1), " +
+                "('Đinh Sỹ Vinh',      '0123456678', 'vinh@thuvien.com', 'Đà Nẵng',   'Nhân viên', '2025-06-01', 2), " +
+                "('Nguyễn Trọng Hiếu', '0356602342', 'hieu@thuvien.com', 'TP.HCM',    'Nhân viên', '2026-01-20', 3)");
 
+        // ── Bạn đọc ────────────────────────────────────────────────────────────
         db.execSQL("INSERT INTO BanDoc (ten, sdt, diachi) VALUES " +
-                "('Lê Văn Long', '0911111111', 'TPHCM'), " +
-                "('Phạm Tấn Lộc', '0922222222', 'Bình Dương'), " +
-                "('Nguyễn Trọng Hiếu', '0933333333', 'Hà Nội')");
+                "('Lê Văn Long',       '0911111111', 'TP.HCM'),     " +
+                "('Phạm Tấn Lộc',      '0922222222', 'Bình Dương'), " +
+                "('Nguyễn Trọng Hiếu', '0933333333', 'Hà Nội'),    " +
+                "('Trần Thị Mai',      '0944444444', 'Đà Nẵng'),   " +
+                "('Nguyễn Văn Khoa',   '0955555555', 'Cần Thơ')");
 
+        // ── Thể loại ───────────────────────────────────────────────────────────
         db.execSQL("INSERT INTO TheLoai (ten) VALUES " +
-                "('Văn Học'), " +
-                "('Hóa Học'), " +
-                "('Công Nghệ'), " +
-                "('Lịch Sử')");
+                "('Văn Học'),      " +
+                "('Khoa Học'),     " +
+                "('Công Nghệ'),    " +
+                "('Lịch Sử'),      " +
+                "('Kinh Tế'),      " +
+                "('Kỹ Năng Sống')");
 
-        db.execSQL("INSERT INTO Sach (ten, tacgia, soluong, tl_id) VALUES " +
-                "('Sách ngữ văn lớp 6 tập 1', 'Bộ GD&ĐT', 10, 1), " +
-                "('Sách ngữ văn lớp 6 tập 2', 'Bộ GD&ĐT', 10, 1), " +
-                "('Dế Mèn phiêu lưu ký', 'Tô Hoài', 3, 1), " +
-                "('Hóa học đại cương', 'Nguyễn Văn A', 4, 2), " +
-                "('Java cơ bản', 'ABC', 5, 3), " +
-                "('Đại Việt sử ký', 'Lê Văn Hưu', 2, 4)");
+        // ── Sách (soluong = số lượng TRƯỚC KHI trigger giảm) ──────────────────
+        db.execSQL("INSERT INTO Sach (ten, tacgia, nxb, namxb, soluong, tl_id) VALUES " +
+                // --- Văn Học ---
+                "('Ngữ Văn 12 - Tập 1',         'Bộ GD&ĐT',        'NXB Giáo Dục',    2024, 10, 1), " +
+                "('Ngữ Văn 12 - Tập 2',         'Bộ GD&ĐT',        'NXB Giáo Dục',    2024, 10, 1), " +
+                "('Dế Mèn Phiêu Lưu Ký',        'Tô Hoài',         'NXB Kim Đồng',    2022,  5, 1), " +
+                "('Nhà Giả Kim',                 'Paulo Coelho',    'NXB Hội Nhà Văn', 2023,  6, 1), " +
+                "('Tắt Đèn',                     'Ngô Tất Tố',      'NXB Văn Học',     2022,  5, 1), " +
+                // --- Khoa Học ---
+                "('Hóa Học Đại Cương',           'Nguyễn Đình Huề', 'NXB ĐH Quốc Gia', 2023, 4, 2), " +
+                "('Vật Lý Đại Cương - Tập 1',   'Lương Duyên Bình','NXB Giáo Dục',    2023,  4, 2), " +
+                // --- Công Nghệ ---
+                "('Lập Trình Java Cơ Bản',       'Trần Văn Nam',    'NXB KHKT',        2024,  6, 3), " +
+                "('Lập Trình Android',           'Nguyễn Anh Tuấn', 'NXB KHKT',        2025,  5, 3), " +
+                "('Cơ Sở Dữ Liệu',              'Hồ Thuần',        'NXB Giáo Dục',    2023,  4, 3), " +
+                // --- Lịch Sử ---
+                "('Đại Việt Sử Ký Toàn Thư',    'Ngô Sĩ Liên',    'NXB KHXH',        2022,  3, 4), " +
+                "('Lịch Sử Việt Nam - Tập 1',   'Ngô Văn Hòa',    'NXB KHXH',        2023,  4, 4), " +
+                // --- Kinh Tế ---
+                "('Nghĩ Giàu Làm Giàu',          'Napoleon Hill',   'NXB Lao Động',    2024,  4, 5), " +
+                "('Kinh Tế Học Vi Mô',           'N. Gregory',      'NXB Kinh Tế',     2023,  5, 5), " +
+                // --- Kỹ Năng Sống ---
+                "('Đắc Nhân Tâm',                'Dale Carnegie',   'NXB Tổng Hợp',    2023,  5, 6), " +
+                "('7 Thói Quen Hiệu Quả',        'Stephen Covey',   'NXB Tổng Hợp',    2024,  4, 6)");
 
-        // Seed phiếu mượn / trả mẫu
+        // ── Phiếu mượn ─────────────────────────────────────────────────────────
+        // PM1 – Lê Văn Long – đã trả
+        // PM2 – Phạm Tấn Lộc – đã trả
+        // PM3 – Nguyễn Trọng Hiếu – đã trả
+        // PM4 – Trần Thị Mai – đang mượn
+        // PM5 – Lê Văn Long – đang mượn
+        // PM6 – Nguyễn Văn Khoa – đang mượn
         db.execSQL("INSERT INTO PhieuMuon (bd_id, nv_id, ngay_muon, ngay_tra, trangthai) VALUES " +
-                "(3, 1, '2021-03-12', '2021-03-19', 'dangmuon'), " +
-                "(3, 1, '2021-03-12', '2021-03-19', 'dangmuon'), " +
-                "(3, 1, '2021-03-12', '2021-03-19', 'dangmuon')");
+                "(1, 2, '2026-01-10', '2026-01-24', 'datra'),    " +
+                "(2, 2, '2026-02-05', '2026-02-19', 'datra'),    " +
+                "(3, 1, '2026-03-10', '2026-03-24', 'datra'),    " +
+                "(4, 3, '2026-04-01', '2026-04-20', 'dangmuon'), " +
+                "(1, 1, '2026-04-15', '2026-05-05', 'dangmuon'), " +
+                "(5, 2, '2026-04-28', '2026-05-12', 'dangmuon')");
 
+        // ── Chi tiết mượn (trigger tự giảm soluong Sach) ──────────────────────
         db.execSQL("INSERT INTO ChiTietMuon (pm_id, sach_id, soluong) VALUES " +
-                "(1, 1, 1), (1, 2, 1), " +
-                "(2, 3, 1), " +
-                "(3, 5, 2)");
+                "(1,  1, 1), (1,  4, 1), " +   // PM1 mượn: Ngữ Văn 12-T1, Nhà Giả Kim
+                "(2,  3, 1), (2, 15, 1), " +   // PM2 mượn: Dế Mèn, Đắc Nhân Tâm
+                "(3,  8, 1), (3,  9, 1), " +   // PM3 mượn: Java, Android
+                "(4,  2, 1), (4, 13, 1), " +   // PM4 mượn: Ngữ Văn 12-T2, Nghĩ Giàu
+                "(5,  6, 1), (5, 14, 1), " +   // PM5 mượn: Hóa Đại Cương, Kinh Tế Vi Mô
+                "(6, 11, 1), (6, 16, 1)");     // PM6 mượn: Đại Việt Sử Ký, 7 Thói Quen
 
+        // ── Phiếu trả (cho PM1, PM2, PM3) ─────────────────────────────────────
         db.execSQL("INSERT INTO PhieuTra (pm_id, ngay_tra, tienphat) VALUES " +
-                "(1, '2021-03-20', 0), " +
-                "(2, '2021-03-20', 0)");
+                "(1, '2026-01-22', 0), " +
+                "(2, '2026-02-17', 0), " +
+                "(3, '2026-03-23', 0)");
 
+        // ── Chi tiết trả (trigger tự tăng soluong Sach) ───────────────────────
         db.execSQL("INSERT INTO ChiTietTra (pt_id, sach_id, soluong) VALUES " +
-                "(1, 1, 1), (1, 2, 1), " +
-                "(2, 3, 1)");
+                "(1,  1, 1), (1,  4, 1), " +   // PT1 trả: Ngữ Văn 12-T1, Nhà Giả Kim
+                "(2,  3, 1), (2, 15, 1), " +   // PT2 trả: Dế Mèn, Đắc Nhân Tâm
+                "(3,  8, 1), (3,  9, 1)");     // PT3 trả: Java, Android
     }
 }

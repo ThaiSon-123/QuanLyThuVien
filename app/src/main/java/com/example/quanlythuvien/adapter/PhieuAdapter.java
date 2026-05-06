@@ -1,5 +1,6 @@
 package com.example.quanlythuvien.adapter;
 
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +92,20 @@ public class PhieuAdapter extends RecyclerView.Adapter<PhieuAdapter.VH> {
             holder.tvStatus.setText("Đã trả");
             holder.tvStatus.setTextColor(0xFF2F8A3E);
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_datra);
+        } else if ("dunghạn".equals(r.status)) {
+            holder.tvStatus.setVisibility(View.VISIBLE);
+            holder.tvStatus.setText("Đúng hạn");
+            holder.tvStatus.setTextColor(0xFF2F8A3E);
+            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_datra);
+        } else if ("trehan".equals(r.status)) {
+            holder.tvStatus.setVisibility(View.VISIBLE);
+            holder.tvStatus.setText("Trễ hạn");
+            holder.tvStatus.setTextColor(0xFFFFFFFF);
+            GradientDrawable red = new GradientDrawable();
+            red.setShape(GradientDrawable.RECTANGLE);
+            red.setCornerRadius(24f);
+            red.setColor(0xFFE04D4D);
+            holder.tvStatus.setBackground(red);
         } else {
             holder.tvStatus.setVisibility(View.VISIBLE);
             holder.tvStatus.setText("Chưa trả");

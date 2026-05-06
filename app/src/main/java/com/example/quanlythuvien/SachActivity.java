@@ -15,6 +15,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.Normalizer;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -27,6 +29,7 @@ import com.example.quanlythuvien.db.SachDao;
 import com.example.quanlythuvien.db.TheLoaiDao;
 import com.example.quanlythuvien.model.Sach;
 import com.example.quanlythuvien.model.TheLoai;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +88,7 @@ public class SachActivity extends AppCompatActivity {
         setupSearchHeader();
         setupTabs();
         setupFab();
+        setupBottomNav();
 
         selectTab(TAB_ALL);
     }
@@ -230,8 +234,29 @@ public class SachActivity extends AppCompatActivity {
         }
     }
 
+    /** Chuẩn hóa: bỏ dấu tiếng Việt, lowercase. */
+    private static String norm(String s) {
+        if (s == null) return "";
+        String nfd = Normalizer.normalize(s.toLowerCase().trim(), Normalizer.Form.NFD);
+        return nfd.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                  .replace('đ', 'd').replace('Đ', 'd');
+    }
+
     private void applyFilter() {
-        List<Sach> list = sachDao.filter(currentKeyword, currentStatus, currentTlId);
+        // SQL lọc theo status + thể loại; keyword lọc client-side để hỗ trợ không dấu
+        List<Sach> all = sachDao.filter(null, currentStatus, currentTlId);
+        List<Sach> list;
+        if (currentKeyword.trim().isEmpty()) {
+            list = all;
+        } else {
+            String kw = norm(currentKeyword);
+            list = new ArrayList<>();
+            for (Sach s : all) {
+                if (norm(s.ten).contains(kw) || norm(s.tacgia).contains(kw)) {
+                    list.add(s);
+                }
+            }
+        }
         sachAdapter.submit(list);
         tvCount.setText(list.size() + " sản phẩm");
         if (list.isEmpty()) {
@@ -324,6 +349,43 @@ public class SachActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private void setupBottomNav() {
+        BottomNavigationView nav = findViewById(R.id.bottomNav);
+        nav.setSelectedItemId(R.id.nav_book);
+        nav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                Intent i = new Intent(this, MainActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(i);
+                finish();
+                return false;
+            } else if (id == R.id.nav_book) {
+                return true;
+            } else if (id == R.id.nav_borrow) {
+                startActivity(new Intent(this, MuonTraActivity.class));
+                return false;
+            } else if (id == R.id.nav_reader) {
+                startActivity(new Intent(this, BanDocActivity.class));
+                return false;
+            } else if (id == R.id.nav_logout) {
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Đăng xuất")
+                        .setMessage("Bạn có chắc muốn đăng xuất?")
+                        .setPositiveButton("Đăng xuất", (d, w) -> {
+                            getSharedPreferences(LoginActivity.PREFS_NAME, MODE_PRIVATE).edit().clear().apply();
+                            Intent intent = new Intent(this, LoginActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        })
+                        .setNegativeButton("Hủy", null)
+                        .show();
+                return false;
+            }
+            return false;
+        });
     }
 
     private void onSachClick(Sach sach) {

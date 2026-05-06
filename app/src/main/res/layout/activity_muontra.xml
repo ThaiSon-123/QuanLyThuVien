@@ -53,6 +53,72 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Search overlay (ẩn mặc định) -->
+        <LinearLayout
+            android:id="@+id/headerSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:background="@drawable/bg_header_sach"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/btnSearchBack"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="12dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_arrow_back"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Đóng tìm kiếm" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_search_input"
+                android:paddingHorizontal="10dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_search_gray"
+                    android:contentDescription="Tìm" />
+
+                <EditText
+                    android:id="@+id/edtSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Tìm phiếu, tên bạn đọc..."
+                    android:textColor="#000000"
+                    android:textColorHint="#9AA3AE"
+                    android:textSize="14sp"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true"
+                    android:inputType="text" />
+
+                <ImageView
+                    android:id="@+id/btnClearSearch"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_close"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Xóa"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Tabs -->
@@ -153,32 +219,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/dateRow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <!-- Nút bộ lọc — chỉ hiện ở tab Phiếu Mượn -->
+        <ImageView
+            android:id="@+id/btnFilter"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:padding="2dp"
+            android:src="@drawable/ic_filter"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Bộ lọc"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_calendar"
-                android:contentDescription="Ngày" />
-
-            <TextView
-                android:id="@+id/tvDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:text="12/03/2021"
-                android:textColor="#4B4B4B"
-                android:textSize="14sp" />
-        </LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- List -->
@@ -247,6 +300,7 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

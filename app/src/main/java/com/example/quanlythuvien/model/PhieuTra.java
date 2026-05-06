@@ -12,6 +12,7 @@ public class PhieuTra {
     // Join fields (từ PhieuMuon)
     public String tenBanDoc;
     public String ngayMuon;
+    public String ngayHanTra;  // hạn trả gốc từ PhieuMuon.ngay_tra
 
     public List<ChiTietMuon> chiTiet = new ArrayList<>();
 

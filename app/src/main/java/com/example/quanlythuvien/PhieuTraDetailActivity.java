@@ -2,7 +2,9 @@ package com.example.quanlythuvien;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,8 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
 
     private TextView tvMaPhieu;
     private TextView tvNgayTao;
+    private TextView tvHanTra;
+    private TextView tvTinhTrang;
     private TextView tvBanDoc;
     private TextView tvMaPhieuMuon;
 
@@ -61,6 +65,8 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
     private void bindViews() {
         tvMaPhieu = findViewById(R.id.tvMaPhieu);
         tvNgayTao = findViewById(R.id.tvNgayTao);
+        tvHanTra = findViewById(R.id.tvHanTra);
+        tvTinhTrang = findViewById(R.id.tvTinhTrang);
         tvBanDoc = findViewById(R.id.tvBanDoc);
         tvMaPhieuMuon = findViewById(R.id.tvMaPhieuMuon);
     }
@@ -115,10 +121,23 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
         }
         linkedPmId = pt.pmId;
         tvMaPhieu.setText(pt.getMaPhieu());
-        tvNgayTao.setText("Ngày tạo: " + MuonTraActivity.formatDate(pt.ngayTra));
+        tvNgayTao.setText("Ngày trả: " + MuonTraActivity.formatDate(pt.ngayTra));
         tvBanDoc.setText(pt.tenBanDoc == null ? "(Chưa có)" : pt.tenBanDoc);
         tvMaPhieuMuon.setText("PM - " + pt.pmId);
         ctAdapter.submit(pt.chiTiet);
+
+        // Hạn trả + tình trạng
+        tvHanTra.setText("Hạn trả: " + MuonTraActivity.formatDate(pt.ngayHanTra));
+        boolean treHan = pt.ngayTra != null && pt.ngayHanTra != null
+                && pt.ngayTra.compareTo(pt.ngayHanTra) > 0;
+        tvTinhTrang.setVisibility(View.VISIBLE);
+        tvTinhTrang.setText(treHan ? "Trễ hạn" : "Đúng hạn");
+        GradientDrawable pill = new GradientDrawable();
+        pill.setShape(GradientDrawable.RECTANGLE);
+        pill.setCornerRadius(24f);
+        pill.setColor(treHan ? 0xFFE04D4D : 0xFF2F8A3E);
+        tvTinhTrang.setBackground(pill);
+        tvTinhTrang.setTextColor(0xFFFFFFFF);
     }
 
     private void goHome() {

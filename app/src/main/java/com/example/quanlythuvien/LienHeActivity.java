@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.Normalizer;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -106,13 +108,21 @@ public class LienHeActivity extends AppCompatActivity {
         applyFilter(edtSearch.getText().toString());
     }
 
+    /** Chuẩn hóa: bỏ dấu tiếng Việt, lowercase. */
+    private static String norm(String s) {
+        if (s == null) return "";
+        String nfd = Normalizer.normalize(s.toLowerCase().trim(), Normalizer.Form.NFD);
+        return nfd.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                  .replace('đ', 'd').replace('Đ', 'd');
+    }
+
     private void applyFilter(String keyword) {
-        String kw = keyword == null ? "" : keyword.trim().toLowerCase();
+        String kw = norm(keyword);
         List<BanDoc> filtered = new ArrayList<>();
         for (BanDoc b : allList) {
             if (kw.isEmpty()
-                    || (b.ten != null && b.ten.toLowerCase().contains(kw))
-                    || (b.sdt != null && b.sdt.toLowerCase().contains(kw))) {
+                    || norm(b.ten).contains(kw)
+                    || norm(b.sdt).contains(kw)) {
                 filtered.add(b);
             }
         }

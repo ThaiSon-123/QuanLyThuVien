@@ -23,7 +23,7 @@ public class PhieuTraDao {
         List<PhieuTra> list = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
         String sql = "SELECT pt.pt_id, pt.pm_id, pt.ngay_tra, pt.tienphat, " +
-                "bd.ten, pm.ngay_muon " +
+                "bd.ten, pm.ngay_muon, pm.ngay_tra " +
                 "FROM PhieuTra pt " +
                 "LEFT JOIN PhieuMuon pm ON pt.pm_id = pm.pm_id " +
                 "LEFT JOIN BanDoc bd ON pm.bd_id = bd.bd_id " +
@@ -39,7 +39,7 @@ public class PhieuTraDao {
     public PhieuTra findById(int ptId) {
         SQLiteDatabase db = helper.getReadableDatabase();
         String sql = "SELECT pt.pt_id, pt.pm_id, pt.ngay_tra, pt.tienphat, " +
-                "bd.ten, pm.ngay_muon " +
+                "bd.ten, pm.ngay_muon, pm.ngay_tra " +
                 "FROM PhieuTra pt " +
                 "LEFT JOIN PhieuMuon pm ON pt.pm_id = pm.pm_id " +
                 "LEFT JOIN BanDoc bd ON pm.bd_id = bd.bd_id " +
@@ -134,6 +134,7 @@ public class PhieuTraDao {
         p.tienphat = c.getDouble(3);
         p.tenBanDoc = c.getString(4);
         p.ngayMuon = c.getString(5);
+        p.ngayHanTra = c.getString(6);  // hạn trả gốc từ PhieuMuon
         return p;
     }
 }
