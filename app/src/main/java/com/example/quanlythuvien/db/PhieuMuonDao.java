@@ -154,6 +154,22 @@ public class PhieuMuonDao {
         return list;
     }
 
+    public List<PhieuMuon> listChuaTraByBanDoc(int bdId) {
+        List<PhieuMuon> list = new ArrayList<>();
+        SQLiteDatabase db = helper.getReadableDatabase();
+        String sql = "SELECT pm.pm_id, pm.bd_id, pm.nv_id, pm.ngay_muon, pm.ngay_tra, " +
+                "'chuatra' AS trangthai, pm.songaytre, pm.tienphat, bd.ten " +
+                "FROM PhieuMuon pm " +
+                "LEFT JOIN BanDoc bd ON pm.bd_id = bd.bd_id " +
+                "WHERE pm.bd_id = ? " +
+                "AND NOT EXISTS (SELECT 1 FROM PhieuTra pt WHERE pt.pm_id = pm.pm_id) " +
+                "ORDER BY pm.pm_id DESC";
+        try (Cursor c = db.rawQuery(sql, new String[]{String.valueOf(bdId)})) {
+            while (c.moveToNext()) list.add(readRow(c));
+        }
+        return list;
+    }
+
     public int count() {
         SQLiteDatabase db = helper.getReadableDatabase();
         try (Cursor c = db.rawQuery("SELECT COUNT(*) FROM PhieuMuon", null)) {

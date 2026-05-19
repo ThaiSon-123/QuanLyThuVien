@@ -165,7 +165,6 @@ public class MuonTraActivity extends AppCompatActivity {
         String kw = norm(currentKeyword);
         List<PhieuAdapter.Row> filtered = new ArrayList<>();
         for (PhieuAdapter.Row r : allRows) {
-            // Lọc trạng thái (chỉ áp dụng cho tab Phiếu Mượn)
             if (currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus)) {
                 if (!currentStatus.equals(r.status)) continue;
             }

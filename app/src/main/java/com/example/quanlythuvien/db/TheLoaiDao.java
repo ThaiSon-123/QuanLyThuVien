@@ -85,6 +85,12 @@ public class TheLoaiDao {
 
     public int delete(int tlId) {
         SQLiteDatabase db = helper.getWritableDatabase();
+        // Gỡ FK trước: set tl_id = NULL cho tất cả sách thuộc thể loại này
+        // (tránh lỗi FOREIGN KEY constraint vì FK constraints đang bật)
+        ContentValues cv = new ContentValues();
+        cv.putNull("tl_id");
+        db.update("Sach", cv, "tl_id = ?", new String[]{String.valueOf(tlId)});
+        // Xóa thể loại
         return db.delete("TheLoai", "tl_id = ?", new String[]{String.valueOf(tlId)});
     }
 

@@ -65,8 +65,7 @@ public class BaoCaoChiTietActivity extends AppCompatActivity {
         tvTotal = findViewById(R.id.tvTotal);
         tvEmpty = findViewById(R.id.tvEmpty);
 
-        // Default tháng có data seed
-        selectedMonth.set(2021, Calendar.MARCH, 1);
+        selectedMonth.set(2026, Calendar.MAY, 1);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.monthRow).setOnClickListener(v -> showMonthPicker());

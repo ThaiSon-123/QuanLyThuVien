@@ -48,7 +48,6 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
     private BanDoc selectedBanDoc;
     private Calendar selectedHanTra;
 
-    /** sach_id -> ChiTietMuon (qty cộng dồn). */
     private final java.util.LinkedHashMap<Integer, ChiTietMuon> selected = new java.util.LinkedHashMap<>();
 
     @Override
@@ -146,7 +145,32 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
                 .setItems(names, (d, which) -> {
                     selectedBanDoc = list.get(which);
                     tvBanDoc.setText(selectedBanDoc.ten);
+                    checkUnreturnedSlips(selectedBanDoc);
                 })
+                .show();
+    }
+
+    private void checkUnreturnedSlips(BanDoc banDoc) {
+        List<PhieuMuon> chuaTra = phieuMuonDao.listChuaTraByBanDoc(banDoc.bdId);
+        if (chuaTra.isEmpty()) return;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(banDoc.ten).append(" có ").append(chuaTra.size())
+                .append(" phiếu mượn chưa trả:\n\n");
+        for (PhieuMuon pm : chuaTra) {
+            sb.append("• PM-").append(pm.pmId)
+                    .append("  (mượn: ").append(pm.ngayMuon).append(")\n");
+        }
+        sb.append("\nBạn có muốn xem chi tiết?");
+
+        new AlertDialog.Builder(this)
+                .setTitle("Cảnh báo")
+                .setMessage(sb.toString())
+                .setPositiveButton("Xem phiếu mượn", (d, w) -> {
+                    int firstPmId = chuaTra.get(0).pmId;
+                    startActivity(PhieuMuonDetailActivity.newIntent(this, firstPmId));
+                })
+                .setNegativeButton("Tiếp tục lập phiếu", null)
                 .show();
     }
 

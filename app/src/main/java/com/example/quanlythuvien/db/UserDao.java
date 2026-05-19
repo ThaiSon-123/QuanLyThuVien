@@ -1,5 +1,6 @@
 package com.example.quanlythuvien.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +29,25 @@ public class UserDao {
             if (c.moveToFirst()) return c.getString(0);
         }
         return null;
+    }
+
+    public String findEmailByUsername(String username) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        String sql = "SELECT nv.email FROM NhanVien nv " +
+                "JOIN Users u ON u.user_id = nv.user_id " +
+                "WHERE u.username = ? AND nv.email IS NOT NULL AND nv.email != '' LIMIT 1";
+        try (Cursor c = db.rawQuery(sql, new String[]{username})) {
+            if (c.moveToFirst()) return c.getString(0);
+        }
+        return null;
+    }
+
+    public boolean resetPassword(String username, String newPassword) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("password", newPassword);
+        int rows = db.update("Users", cv, "username = ?", new String[]{username});
+        return rows > 0;
     }
 
     public UserInfo login(String username, String password) {

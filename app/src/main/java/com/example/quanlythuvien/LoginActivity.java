@@ -46,14 +46,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        tvForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(LoginActivity.this,
-                        "Vui lòng liên hệ quản trị viên để lấy lại mật khẩu",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+        tvForgotPassword.setOnClickListener(v ->
+                startActivity(new Intent(this, ForgotPasswordActivity.class)));
     }
 
     private void doLogin() {

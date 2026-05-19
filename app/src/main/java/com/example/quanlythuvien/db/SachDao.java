@@ -37,11 +37,6 @@ public class SachDao {
         return query("s.tl_id = ?", new String[]{String.valueOf(tlId)});
     }
 
-    /**
-     * @param keyword nullable — if provided, matches s.ten / s.tacgia
-     * @param status  "con" | "het" | anything else = no filter
-     * @param tlId    >0 to filter by thể loại
-     */
     public List<Sach> filter(String keyword, String status, int tlId) {
         List<String> conds = new ArrayList<>();
         List<String> args = new ArrayList<>();

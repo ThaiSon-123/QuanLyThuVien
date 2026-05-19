@@ -12,7 +12,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.quanlythuvien.R;
 
-/** Dialog xác nhận chung — 2 nút ngang "Thoát" / hành động. */
 public final class ConfirmDialog {
 
     private ConfirmDialog() {}
@@ -43,7 +42,6 @@ public final class ConfirmDialog {
         dialog.show();
     }
 
-    /** Shortcut cho nút "Xóa". */
     public static void showDelete(Context ctx, Runnable onConfirm) {
         show(ctx, "Bạn có chắc chắn muốn xóa không?", "Xóa", onConfirm);
     }

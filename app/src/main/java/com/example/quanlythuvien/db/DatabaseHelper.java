@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "quanlythuvien.db";
-    public static final int DB_VERSION = 7;
+    public static final int DB_VERSION = 9;
 
     private static DatabaseHelper instance;
 
@@ -159,9 +159,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // ── Nhân viên ──────────────────────────────────────────────────────────
         db.execSQL("INSERT INTO NhanVien (ten, sdt, email, diachi, chucvu, ngay_vao_lam, user_id) VALUES " +
-                "('Võ Thái Sơn',       '0123457678', 'son@thuvien.com',  'Hà Nội',    'Quản lý',   '2025-01-15', 1), " +
-                "('Đinh Sỹ Vinh',      '0123456678', 'vinh@thuvien.com', 'Đà Nẵng',   'Nhân viên', '2025-06-01', 2), " +
-                "('Nguyễn Trọng Hiếu', '0356602342', 'hieu@thuvien.com', 'TP.HCM',    'Nhân viên', '2026-01-20', 3)");
+                "('Võ Thái Sơn',       '0123457678', 'thaisonpro328@gmail.com',   'Hà Nội',  'Quản lý',   '2025-01-15', 1), " +
+                "('Đinh Sỹ Vinh',      '0123456678', 'thaisonpro328@gmail.com',   'Đà Nẵng', 'Nhân viên', '2025-06-01', 2), " +
+                "('Nguyễn Trọng Hiếu', '0356602342', 'tronghieu160618@gmail.com', 'TP.HCM',  'Nhân viên', '2026-01-20', 3)");
 
         // ── Bạn đọc ────────────────────────────────────────────────────────────
         db.execSQL("INSERT INTO BanDoc (ten, sdt, diachi) VALUES " +

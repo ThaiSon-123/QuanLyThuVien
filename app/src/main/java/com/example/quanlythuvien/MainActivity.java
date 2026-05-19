@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         TextView tvGreeting = findViewById(R.id.tvGreeting);
         TextView tvUserName = findViewById(R.id.tvUserName);
 
-
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String hello;
         if (hour < 12) hello = "Chào buổi sáng 👋";
@@ -72,15 +72,59 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, MODE_PRIVATE);
         String username = prefs.getString(LoginActivity.KEY_USERNAME, "");
-        String displayName = new UserDao(this).findStaffName(username);
-        if (displayName == null || displayName.isEmpty()) displayName = username;
-        tvUserName.setText(displayName == null ? "" : displayName);
+        String rawName = new UserDao(this).findStaffName(username);
+        String displayName = (rawName == null || rawName.isEmpty()) ? username : rawName;
+        tvUserName.setText(displayName);
 
-        btnMenu.setOnClickListener(v -> toast("Menu"));
-        btnAccount.setOnClickListener(v -> {
-            String role = prefs.getString(LoginActivity.KEY_ROLE, "");
-            toast("Xin chào " + username + " (" + role + ")");
+        btnMenu.setOnClickListener(v -> showMenuPopup(btnMenu));
+        btnAccount.setOnClickListener(v -> showAccountDialog(prefs, username, displayName));
+    }
+
+    private void showMenuPopup(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.menu_main_popup, popup.getMenu());
+
+        try {
+            java.lang.reflect.Field field = popup.getClass().getDeclaredField("mPopup");
+            field.setAccessible(true);
+            Object menuPopupHelper = field.get(popup);
+            if (menuPopupHelper != null) {
+                java.lang.reflect.Method method =
+                        menuPopupHelper.getClass().getDeclaredMethod("setForceShowIcon", boolean.class);
+                method.setAccessible(true);
+                method.invoke(menuPopupHelper, true);
+            }
+        } catch (Exception ignored) { }
+
+        popup.getMenu().findItem(R.id.menu_staff)
+                .setVisible(ROLE_ADMIN.equals(currentRole));
+
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.menu_book)    { openBook();    return true; }
+            if (id == R.id.menu_borrow)  { openBorrow();  return true; }
+            if (id == R.id.menu_reader)  { openReader();  return true; }
+            if (id == R.id.menu_report)  { openReport();  return true; }
+            if (id == R.id.menu_contact) { openContact(); return true; }
+            if (id == R.id.menu_staff)   { openStaff();   return true; }
+            if (id == R.id.menu_logout)  { confirmLogout(); return true; }
+            return false;
         });
+        popup.show();
+    }
+
+    private void showAccountDialog(SharedPreferences prefs, String username, String displayName) {
+        String role = prefs.getString(LoginActivity.KEY_ROLE, "");
+        String roleLabel = ROLE_ADMIN.equals(role) ? "Quản trị viên" : "Nhân viên";
+
+        new AlertDialog.Builder(this)
+                .setTitle("Tài khoản")
+                .setMessage("👤  " + displayName + "\n\n"
+                        + "Tên đăng nhập: " + username + "\n"
+                        + "Vai trò: " + roleLabel)
+                .setPositiveButton("Đóng", null)
+                .setNegativeButton("Đăng xuất", (d, w) -> confirmLogout())
+                .show();
     }
 
     private void setupShortcuts() {
