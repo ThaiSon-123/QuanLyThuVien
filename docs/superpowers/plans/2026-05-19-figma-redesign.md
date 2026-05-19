@@ -13,6 +13,19 @@
 
 **Plan key (đã verify):** `team::1628985609645022300` (Sơn Võ Thái's team)
 
+## Progress
+
+| Date | Done | Notes |
+|---|---|---|
+| 2026-05-19 | Task 1-4 (Foundations) | File created: `JY8CL8ssm4wwOUcfrOYGdK` — https://www.figma.com/design/JY8CL8ssm4wwOUcfrOYGdK |
+
+**Context cho phiên sau:**
+- `fileKey`: `JY8CL8ssm4wwOUcfrOYGdK`
+- Variable collection: `LibraryTokens` (mode Light) — 26 color + 15 shape/spacing variables
+- 8 M3 text styles đã có (display/large → label/medium)
+- Font icon: dùng **Material Icons** Regular với ligature (vì Material Symbols Rounded chưa cài). Khi triển khai Android dùng Material Symbols Rounded tương đương.
+- Tiếp tục từ **Task 5: TopAppBar component** trên page `🧩 Components`.
+
 ---
 
 ## Conventions xuyên suốt
