@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:background="@drawable/bg_header_sach"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quay lại"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cấu hình hệ thống"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_phieu_card">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đơn giá phạt mỗi ngày trễ (đ)"
+                    android:textColor="#1A1C1E"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/edtFinePerDay"
+                    style="@style/FormInput"
+                    android:inputType="number"
+                    android:hint="500" />
+
+                <TextView
+                    style="@style/FormLabel"
+                    android:text="Số ngày mượn mặc định"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/edtBorrowDays"
+                    style="@style/FormInput"
+                    android:inputType="number"
+                    android:hint="7" />
+
+                <TextView
+                    style="@style/FormLabel"
+                    android:text="Hạn mức mượn tối đa / phiếu (quyển)"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/edtMaxBooks"
+                    style="@style/FormInput"
+                    android:inputType="number"
+                    android:hint="5" />
+
+                <TextView
+                    style="@style/FormLabel"
+                    android:text="Số lần gia hạn tối đa"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/edtMaxGiaHan"
+                    style="@style/FormInput"
+                    android:inputType="number"
+                    android:hint="2" />
+
+                <TextView
+                    style="@style/FormLabel"
+                    android:text="Số ngày cộng thêm mỗi lần gia hạn"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/edtGiaHanDays"
+                    style="@style/FormInput"
+                    android:inputType="number"
+                    android:hint="7" />
+
+                <TextView
+                    style="@style/FormLabel"
+                    android:text="Cảnh báo sách sắp hết kho (≤ X quyển)"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/edtLowStock"
+                    style="@style/FormInput"
+                    android:inputType="number"
+                    android:hint="2" />
+
+                <TextView
+                    style="@style/FormLabel"
+                    android:text="Cảnh báo phiếu sắp đến hạn (≤ X ngày)"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/edtNearDue"
+                    style="@style/FormInput"
+                    android:inputType="number"
+                    android:hint="3" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="Lưu cấu hình"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_btn_primary"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/btnReset"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Khôi phục mặc định"
+                android:textColor="#1565C0"
+                android:textSize="14sp"
+                android:background="@drawable/bg_btn_outlined"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
