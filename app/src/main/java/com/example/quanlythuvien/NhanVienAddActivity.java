@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -16,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quanlythuvien.db.NhanVienDao;
 import com.example.quanlythuvien.model.NhanVien;
+import com.example.quanlythuvien.util.StaffAccountValidator;
 import com.example.quanlythuvien.util.StaffRoleOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -37,6 +37,7 @@ public class NhanVienAddActivity extends AppCompatActivity {
 
     private EditText edtTen;
     private EditText edtSdt;
+    private EditText edtUsername;
     private EditText edtEmail;
     private Spinner spinnerChucVu;
     private EditText edtPassword;
@@ -65,6 +66,7 @@ public class NhanVienAddActivity extends AppCompatActivity {
     private void bindViews() {
         edtTen = findViewById(R.id.edtTen);
         edtSdt = findViewById(R.id.edtSdt);
+        edtUsername = findViewById(R.id.edtUsername);
         edtEmail = findViewById(R.id.edtEmail);
         spinnerChucVu = findViewById(R.id.spinnerChucVu);
         edtPassword = findViewById(R.id.edtPassword);
@@ -125,12 +127,12 @@ public class NhanVienAddActivity extends AppCompatActivity {
 
             edtTen.setText(current.ten);
             edtSdt.setText(current.sdt);
+            edtUsername.setText(current.username);
             edtEmail.setText(current.email);
             spinnerChucVu.setSelection(StaffRoleOptions.indexOf(current.chucvu));
             edtDiaChi.setText(current.diachi);
-
-            lblPassword.setVisibility(View.GONE);
-            edtPassword.setVisibility(View.GONE);
+            lblPassword.setText("Mật khẩu đăng nhập");
+            edtPassword.setHint("Để trống nếu không đổi");
         } else {
             tvTitle.setText("Thêm nhân viên");
             btnConfirm.setText("Thêm nhân viên");
@@ -140,6 +142,7 @@ public class NhanVienAddActivity extends AppCompatActivity {
     private void onConfirm() {
         String ten = edtTen.getText().toString().trim();
         String sdt = edtSdt.getText().toString().trim();
+        String username = edtUsername.getText().toString().trim();
         String email = edtEmail.getText().toString().trim();
         String chucvu = spinnerChucVu.getSelectedItem() == null
                 ? StaffRoleOptions.EMPLOYEE
@@ -152,53 +155,83 @@ public class NhanVienAddActivity extends AppCompatActivity {
             edtTen.requestFocus();
             return;
         }
+        if (TextUtils.isEmpty(username)) {
+            edtUsername.setError("Vui lòng nhập tên đăng nhập");
+            edtUsername.requestFocus();
+            return;
+        }
+        if (TextUtils.isEmpty(email)) {
+            edtEmail.setError("Vui lòng nhập email");
+            edtEmail.requestFocus();
+            return;
+        }
+
         if (nvId > 0) {
-            // Update
-            current.ten = ten;
-            current.sdt = sdt;
-            current.email = email;
-            current.chucvu = chucvu;
-            current.diachi = diachi;
-            int rows = nhanVienDao.update(current);
-            if (rows > 0) {
-                Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                finish();
-            } else {
-                Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
-            }
+            updateNhanVien(ten, sdt, username, email, chucvu, password, diachi);
         } else {
-            // Add
-            if (TextUtils.isEmpty(email)) {
-                edtEmail.setError("Vui lòng nhập email (làm tài khoản)");
-                edtEmail.requestFocus();
-                return;
-            }
-            if (TextUtils.isEmpty(password)) {
-                edtPassword.setError("Vui lòng nhập mật khẩu");
-                edtPassword.requestFocus();
-                return;
-            }
+            insertNhanVien(ten, sdt, username, email, chucvu, password, diachi);
+        }
+    }
 
-            NhanVien n = new NhanVien();
-            n.ten = ten;
-            n.sdt = sdt;
-            n.email = email;
-            n.diachi = diachi;
-            n.chucvu = chucvu;
-            n.ngayVaoLam = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    .format(new Date());
-            n.trangthai = "lamviec";
+    private void updateNhanVien(String ten, String sdt, String username, String email,
+                                String chucvu, String password, String diachi) {
+        if (current.userId <= 0 && TextUtils.isEmpty(password)) {
+            edtPassword.setError("Vui lòng nhập mật khẩu");
+            edtPassword.requestFocus();
+            return;
+        }
+        if (!StaffAccountValidator.isValidForUpdate(username, email, password)) {
+            Toast.makeText(this, "Thông tin tài khoản chưa hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            long id = nhanVienDao.insertWithUser(n, email, password);
-            if (id > 0) {
-                Toast.makeText(this, "Đã thêm nhân viên", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                finish();
-            } else {
-                Toast.makeText(this, "Thêm thất bại (email có thể đã tồn tại)",
-                        Toast.LENGTH_SHORT).show();
-            }
+        current.ten = ten;
+        current.sdt = sdt;
+        current.email = email;
+        current.chucvu = chucvu;
+        current.diachi = diachi;
+
+        int rows = nhanVienDao.updateWithUser(current, username, password);
+        if (rows > 0) {
+            Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
+        } else {
+            Toast.makeText(this, "Cập nhật thất bại (username có thể đã tồn tại)",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void insertNhanVien(String ten, String sdt, String username, String email,
+                                String chucvu, String password, String diachi) {
+        if (TextUtils.isEmpty(password)) {
+            edtPassword.setError("Vui lòng nhập mật khẩu");
+            edtPassword.requestFocus();
+            return;
+        }
+        if (!StaffAccountValidator.isValidForCreate(username, email, password)) {
+            Toast.makeText(this, "Thông tin tài khoản chưa hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        NhanVien n = new NhanVien();
+        n.ten = ten;
+        n.sdt = sdt;
+        n.email = email;
+        n.diachi = diachi;
+        n.chucvu = chucvu;
+        n.ngayVaoLam = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                .format(new Date());
+        n.trangthai = "lamviec";
+
+        long id = nhanVienDao.insertWithUser(n, username, password);
+        if (id > 0) {
+            Toast.makeText(this, "Đã thêm nhân viên", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
+        } else {
+            Toast.makeText(this, "Thêm thất bại (username có thể đã tồn tại)",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

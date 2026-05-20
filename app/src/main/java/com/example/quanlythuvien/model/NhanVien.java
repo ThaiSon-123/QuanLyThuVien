@@ -10,6 +10,7 @@ public class NhanVien {
     public String ngayVaoLam;   // yyyy-MM-dd
     public String trangthai;    // "lamviec" | "nghi"
     public int userId;
+    public String username;
 
     public String getMaNhanVien() {
         return String.format("NV - %03d", nvId);

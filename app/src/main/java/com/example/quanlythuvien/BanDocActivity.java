@@ -80,19 +80,7 @@ public class BanDocActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         btnSearch.setOnClickListener(v -> enterSearchMode());
         android.view.View fab = findViewById(R.id.fabAdd);
-        fab.setOnClickListener(v -> {
-            if (!com.example.quanlythuvien.util.RoleHelper.isAdmin(this)) {
-                android.widget.Toast.makeText(this,
-                        "Bạn không có quyền thêm bạn đọc",
-                        android.widget.Toast.LENGTH_SHORT).show();
-                return;
-            }
-            startActivity(new Intent(this, BanDocAddActivity.class));
-        });
-        // NV không thấy nút Thêm để tránh confuse
-        if (!com.example.quanlythuvien.util.RoleHelper.isAdmin(this)) {
-            fab.setVisibility(android.view.View.GONE);
-        }
+        fab.setOnClickListener(v -> startActivity(new Intent(this, BanDocAddActivity.class)));
     }
 
     private void setupSearchHeader() {
