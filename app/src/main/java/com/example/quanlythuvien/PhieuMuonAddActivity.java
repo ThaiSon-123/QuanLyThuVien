@@ -22,6 +22,7 @@ import com.example.quanlythuvien.model.BanDoc;
 import com.example.quanlythuvien.model.ChiTietMuon;
 import com.example.quanlythuvien.model.PhieuMuon;
 import com.example.quanlythuvien.model.Sach;
+import com.example.quanlythuvien.util.BorrowStockPolicy;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -207,6 +208,13 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
             return;
         }
         ChiTietMuon ct = selected.get(s.sachId);
+        int selectedQuantity = ct == null ? 0 : ct.soluong;
+        if (!BorrowStockPolicy.canAddOneMore(selectedQuantity, s.soluong)) {
+            Toast.makeText(this,
+                    "Không đủ số lượng sách " + s.ten + " để mượn",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (ct == null) {
             ct = new ChiTietMuon(s.sachId, s.ten, 1);
             selected.put(s.sachId, ct);
