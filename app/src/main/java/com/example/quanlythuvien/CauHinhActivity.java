@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quanlythuvien.db.CauHinhDao;
+import com.example.quanlythuvien.db.PhieuTraDao;
 
 /** Cấu hình hệ thống — chỉ dành cho admin. */
 public class CauHinhActivity extends AppCompatActivity {
@@ -79,6 +80,7 @@ public class CauHinhActivity extends AppCompatActivity {
         cauHinhDao.setInt(CauHinhDao.KEY_GIA_HAN_DAYS, giaHanD);
         cauHinhDao.setInt(CauHinhDao.KEY_LOW_STOCK_THRESHOLD, lowStock);
         cauHinhDao.setInt(CauHinhDao.KEY_NEAR_DUE_DAYS, nearDue);
+        new PhieuTraDao(this).recalculateAllFines(fine);
 
         Toast.makeText(this, "Đã lưu cấu hình", Toast.LENGTH_SHORT).show();
         finish();
@@ -101,6 +103,7 @@ public class CauHinhActivity extends AppCompatActivity {
         cauHinhDao.setInt(CauHinhDao.KEY_GIA_HAN_DAYS, 7);
         cauHinhDao.setInt(CauHinhDao.KEY_LOW_STOCK_THRESHOLD, 2);
         cauHinhDao.setInt(CauHinhDao.KEY_NEAR_DUE_DAYS, 3);
+        new PhieuTraDao(this).recalculateAllFines(500);
         loadCurrent();
         Toast.makeText(this, "Đã khôi phục mặc định", Toast.LENGTH_SHORT).show();
     }

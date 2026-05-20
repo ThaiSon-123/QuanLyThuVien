@@ -150,6 +150,35 @@ public class PhieuTraDao {
         return 0;
     }
 
+    public void recalculateAllFines(double finePerDay) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.execSQL("UPDATE PhieuTra " +
+                    "SET tienphat = MAX(0, CAST(julianday(ngay_tra) - julianday(" +
+                    "    (SELECT pm.ngay_tra FROM PhieuMuon pm WHERE pm.pm_id = PhieuTra.pm_id)" +
+                    ") AS INTEGER)) * ? " +
+                    "WHERE EXISTS (SELECT 1 FROM PhieuMuon pm WHERE pm.pm_id = PhieuTra.pm_id)",
+                    new Object[]{finePerDay});
+
+            db.execSQL("UPDATE PhieuMuon " +
+                    "SET songaytre = (" +
+                    "        SELECT MAX(0, CAST(julianday(pt.ngay_tra) - julianday(PhieuMuon.ngay_tra) AS INTEGER)) " +
+                    "        FROM PhieuTra pt WHERE pt.pm_id = PhieuMuon.pm_id LIMIT 1" +
+                    "    ), " +
+                    "    tienphat = (" +
+                    "        SELECT MAX(0, CAST(julianday(pt.ngay_tra) - julianday(PhieuMuon.ngay_tra) AS INTEGER)) * ? " +
+                    "        FROM PhieuTra pt WHERE pt.pm_id = PhieuMuon.pm_id LIMIT 1" +
+                    "    ) " +
+                    "WHERE EXISTS (SELECT 1 FROM PhieuTra pt WHERE pt.pm_id = PhieuMuon.pm_id)",
+                    new Object[]{finePerDay});
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     private PhieuTra readRow(Cursor c) {
         PhieuTra p = new PhieuTra();
         p.ptId = c.getInt(0);
