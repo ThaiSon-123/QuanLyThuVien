@@ -135,7 +135,6 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
         tvMaPhieuMuon.setText("PM - " + pt.pmId);
         ctAdapter.submit(pt.chiTiet);
 
-        // Hạn trả + tình trạng
         tvHanTra.setText("Hạn trả: " + MuonTraActivity.formatDate(pt.ngayHanTra));
         boolean treHan = pt.ngayTra != null && pt.ngayHanTra != null
                 && pt.ngayTra.compareTo(pt.ngayHanTra) > 0;
@@ -148,12 +147,10 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
         tvTinhTrang.setBackground(pill);
         tvTinhTrang.setTextColor(0xFFFFFFFF);
 
-        // Card tiền phạt — chỉ hiện khi trễ hạn
         int days = FineCalculator.daysOverdue(pt.ngayHanTra, pt.ngayTra);
         if (days > 0) {
             cardTienPhat.setVisibility(View.VISIBLE);
             tvTienPhatLabel.setText("TIỀN PHẠT (TRỄ " + days + " NGÀY)");
-            // Ưu tiên dùng giá trị đã lưu DB; nếu = 0 thì compute lại
             double tien = pt.tienphat > 0
                     ? pt.tienphat
                     : FineCalculator.calcFine(this, pt.ngayHanTra, pt.ngayTra,

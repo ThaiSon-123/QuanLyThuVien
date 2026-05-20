@@ -75,11 +75,9 @@ public class PhieuTraAddActivity extends AppCompatActivity {
 
         int preselectPmId = getIntent().getIntExtra(EXTRA_PM_ID, 0);
         if (preselectPmId > 0) {
-            // Auto-fill từ phiếu mượn được truyền vào
             PhieuMuon p = new PhieuMuon();
             p.pmId = preselectPmId;
             onPickPhieuMuon(p);
-            // Vẫn load list để khi đổi phiếu thì có sẵn
             loadPhieuMuonChuaTra();
         } else {
             showPickState();

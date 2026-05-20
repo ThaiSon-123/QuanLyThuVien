@@ -139,10 +139,8 @@ public class PhieuMuonDetailActivity extends AppCompatActivity {
 
     private void onTraPhieuClick() {
         if (linkedPtId > 0) {
-            // Đã trả — mở chi tiết phiếu trả
             startActivity(PhieuTraDetailActivity.newIntent(this, linkedPtId));
         } else {
-            // Chưa trả — mở màn lập phiếu trả với pmId được pre-fill
             startActivity(PhieuTraAddActivity.newIntent(this, pmId));
         }
     }
@@ -198,7 +196,6 @@ public class PhieuMuonDetailActivity extends AppCompatActivity {
             btnTraPhieu.setBackgroundResource(R.drawable.bg_btn_primary);
         }
 
-        // Banner: nếu phiếu CHƯA trả và đã quá hạn → đỏ "QUÁ HẠN N NGÀY"
         int daysOverdue = (linkedPtId == 0)
                 ? FineCalculator.daysOverdue(pm.ngayTra, FineCalculator.today())
                 : 0;
@@ -210,9 +207,7 @@ public class PhieuMuonDetailActivity extends AppCompatActivity {
             tvBannerLabel.setText("HẠN TRẢ SÁCH");
         }
 
-        // Gia hạn: chỉ hiện cho phiếu chưa trả
         if (linkedPtId == 0) {
-            // Hiện thông tin số lần gia hạn nếu đã từng gia hạn
             if (pm.lanGiaHan > 0) {
                 tvGiaHanInfo.setVisibility(android.view.View.VISIBLE);
                 tvGiaHanInfo.setText("Đã gia hạn " + pm.lanGiaHan + "/" + maxGiaHan
@@ -221,7 +216,6 @@ public class PhieuMuonDetailActivity extends AppCompatActivity {
                 tvGiaHanInfo.setVisibility(android.view.View.GONE);
             }
 
-            // Nút gia hạn: ẩn nếu đã quá hạn HOẶC đã max
             boolean canGiaHan = daysOverdue == 0 && pm.lanGiaHan < maxGiaHan;
             btnGiaHan.setVisibility(canGiaHan ? android.view.View.VISIBLE : android.view.View.GONE);
         } else {

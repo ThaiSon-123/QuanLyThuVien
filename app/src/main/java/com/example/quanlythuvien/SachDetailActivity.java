@@ -144,7 +144,6 @@ public class SachDetailActivity extends AppCompatActivity {
         ivThumbPlaceholder.setOnClickListener(v -> pickImage());
         ivThumbCover.setOnClickListener(v -> pickImage());
 
-        // Ẩn nút Sửa/Xóa cho NV (vốn cũng đã check trong onDelete/onUpdate)
         if (!isAdmin()) {
             findViewById(R.id.btnDelete).setVisibility(android.view.View.GONE);
             findViewById(R.id.btnUpdate).setVisibility(android.view.View.GONE);

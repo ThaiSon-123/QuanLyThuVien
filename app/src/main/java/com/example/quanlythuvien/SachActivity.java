@@ -42,7 +42,6 @@ public class SachActivity extends AppCompatActivity {
     private static final int TAB_CATEGORY = 1;
     private static final String ROLE_ADMIN = "admin";
 
-    /** Intent extras dùng cho Dashboard alert. */
     public static final String EXTRA_FILTER = "filter";
     public static final String FILTER_LOW_STOCK = "low_stock";
 
@@ -96,7 +95,6 @@ public class SachActivity extends AppCompatActivity {
         setupFab();
         setupBottomNav();
 
-        // Áp filter Low Stock từ Dashboard alert
         String f = getIntent().getStringExtra(EXTRA_FILTER);
         if (FILTER_LOW_STOCK.equals(f)) {
             lowStockOnly = true;
@@ -201,7 +199,6 @@ public class SachActivity extends AppCompatActivity {
     private void setupFab() {
         android.view.View fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> onAddClick());
-        // NV không có quyền thêm sách → ẩn FAB cho gọn
         if (!com.example.quanlythuvien.util.RoleHelper.isAdmin(this)) {
             fab.setVisibility(android.view.View.GONE);
         }
@@ -274,7 +271,6 @@ public class SachActivity extends AppCompatActivity {
                 }
             }
         }
-        // Filter "low stock" từ Intent
         if (lowStockOnly) {
             int threshold = com.example.quanlythuvien.db.CauHinhDao.getInstance(this).lowStockThreshold();
             List<Sach> lowList = new ArrayList<>();

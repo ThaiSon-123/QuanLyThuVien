@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private CauHinhDao cauHinhDao;
     private String currentRole;
 
-    // Alert views
     private android.widget.LinearLayout alertsGroup;
     private android.widget.LinearLayout alertOverdue;
     private android.widget.LinearLayout alertNearDue;
@@ -101,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshAlerts() {
-        // Đảm bảo đọc cấu hình mới nhất sau khi admin sửa
         cauHinhDao.invalidate();
         int nearDays = cauHinhDao.nearDueDays();
         int lowStock = cauHinhDao.lowStockThreshold();
@@ -213,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.recentReader).setOnClickListener(v -> openReader());
         findViewById(R.id.recentStaff).setOnClickListener(v -> openStaff());
 
-        // Ẩn các shortcut Nhân viên cho user role nhân viên
         boolean isAdmin = ROLE_ADMIN.equals(currentRole);
         findViewById(R.id.favStaff).setVisibility(isAdmin ? View.VISIBLE : View.INVISIBLE);
         findViewById(R.id.recentStaff).setVisibility(isAdmin ? View.VISIBLE : View.INVISIBLE);

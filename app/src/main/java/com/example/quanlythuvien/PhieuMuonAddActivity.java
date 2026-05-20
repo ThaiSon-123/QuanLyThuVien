@@ -181,7 +181,7 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
                 .setNegativeButton("Xem phiếu mượn", (d, w) -> {
                     int firstPmId = chuaTra.get(0).pmId;
                     startActivity(PhieuMuonDetailActivity.newIntent(this, firstPmId));
-                    finish();  // đóng màn lập phiếu để user xem phiếu cũ
+                    finish();
                 })
                 .show();
     }

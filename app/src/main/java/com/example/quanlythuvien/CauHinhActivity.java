@@ -23,7 +23,6 @@ public class CauHinhActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Chặn nếu không phải admin
         String role = getSharedPreferences(LoginActivity.PREFS_NAME, MODE_PRIVATE)
                 .getString(LoginActivity.KEY_ROLE, "");
         if (!"admin".equals(role)) {

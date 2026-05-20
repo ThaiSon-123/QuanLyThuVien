@@ -37,7 +37,7 @@ public class TheLoaiEditActivity extends AppCompatActivity {
 
     private TheLoaiDao theLoaiDao;
 
-    private int tlId;               // 0 => add mode
+    private int tlId;
     private TheLoai current;
     private Uri selectedIconUri;
     private boolean iconChanged;

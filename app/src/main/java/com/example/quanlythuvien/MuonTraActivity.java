@@ -41,7 +41,6 @@ public class MuonTraActivity extends AppCompatActivity {
     private static final int TAB_MUON = 0;
     private static final int TAB_TRA = 1;
 
-    /** Filter từ Intent. Set qua extra {@link #EXTRA_FILTER}. */
     public static final String EXTRA_FILTER = "filter";
     public static final String FILTER_OVERDUE  = "overdue";
     public static final String FILTER_NEAR_DUE = "near_due";
@@ -93,11 +92,9 @@ public class MuonTraActivity extends AppCompatActivity {
 
         selectTab(TAB_MUON);
 
-        // Áp filter khi đến từ Dashboard alert
         String filter = getIntent().getStringExtra(EXTRA_FILTER);
         if (FILTER_OVERDUE.equals(filter) || FILTER_NEAR_DUE.equals(filter)) {
-            // Hiện chip filter ngay khi vào, sau đó applyFilter sẽ lọc list
-            currentStatus = filter;  // re-use field để chỉ lọc phiếu mượn theo filter này
+            currentStatus = filter;
             applyFilter();
             Toast.makeText(this,
                     FILTER_OVERDUE.equals(filter) ? "Lọc: phiếu QUÁ HẠN" : "Lọc: phiếu sắp đến hạn",
@@ -181,7 +178,6 @@ public class MuonTraActivity extends AppCompatActivity {
 
     private void applyFilter() {
         String kw = norm(currentKeyword);
-        // Tính trước "today" và "today + nearDays" để filter theo ngày khi cần
         String today = FineCalculator.today();
         int nearDays = com.example.quanlythuvien.db.CauHinhDao.getInstance(this).nearDueDays();
         String nearLimit = addDaysIso(today, nearDays);
@@ -190,17 +186,14 @@ public class MuonTraActivity extends AppCompatActivity {
         for (PhieuAdapter.Row r : allRows) {
             if (currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus)) {
                 if (FILTER_OVERDUE.equals(currentStatus)) {
-                    // Chỉ phiếu chưa trả + ngày hạn < today (cần data trên Row — dùng r.status từ logic loadData)
+
                     if (!"trehan".equals(r.status)) continue;
                 } else if (FILTER_NEAR_DUE.equals(currentStatus)) {
-                    // Phiếu chưa trả, ngày_tra ∈ [today, today + nearDays]
-                    // Row không có ngày_tra → cần lookup PhieuMuon; rẻ hơn: lưu rawDate trong Row.
-                    // Tạm: chỉ giữ phiếu "dangmuon" (chưa quá hạn), dùng dữ liệu pm gốc
                     PhieuMuon pm = phieuMuonDao.findById(r.id);
                     if (pm == null || "datra".equals(pm.trangthai)) continue;
                     if (pm.ngayTra == null) continue;
-                    if (pm.ngayTra.compareTo(today) < 0) continue;      // đã quá hạn → loại khỏi near_due
-                    if (pm.ngayTra.compareTo(nearLimit) > 0) continue;  // ngoài cửa sổ near_due
+                    if (pm.ngayTra.compareTo(today) < 0) continue;
+                    if (pm.ngayTra.compareTo(nearLimit) > 0) continue;
                 } else {
                     if (!currentStatus.equals(r.status)) continue;
                 }
@@ -335,7 +328,7 @@ public class MuonTraActivity extends AppCompatActivity {
 
 
         btnFilter.setVisibility(muon ? View.VISIBLE : View.GONE);
-        if (!muon) currentStatus = STATUS_ALL; // reset khi sang tab Trả
+        if (!muon) currentStatus = STATUS_ALL;
 
         loadData();
     }
@@ -346,7 +339,6 @@ public class MuonTraActivity extends AppCompatActivity {
             String today = FineCalculator.today();
             List<PhieuMuon> list = phieuMuonDao.listAll();
             for (PhieuMuon p : list) {
-                // Phiếu chưa trả mà đã quá ngày hạn → coi như "trehan" để hiện đỏ
                 String status = p.trangthai;
                 if (!"datra".equals(status)
                         && FineCalculator.daysOverdue(p.ngayTra, today) > 0) {
@@ -392,7 +384,6 @@ public class MuonTraActivity extends AppCompatActivity {
     }
 
 
-    /** Cộng N ngày vào chuỗi yyyy-MM-dd. */
     static String addDaysIso(String iso, int days) {
         if (iso == null) return null;
         try {
