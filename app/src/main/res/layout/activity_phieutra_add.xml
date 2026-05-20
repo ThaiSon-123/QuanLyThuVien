@@ -317,9 +317,10 @@
                             android:textColor="#44464F"
                             android:textSize="13sp" />
                         <TextView
+                            android:id="@+id/tvFineRate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="500 đ/ngày"
+                            android:text="0 đ/ngày"
                             android:textColor="#1A1C1E"
                             android:textSize="13sp"
                             android:textStyle="bold" />

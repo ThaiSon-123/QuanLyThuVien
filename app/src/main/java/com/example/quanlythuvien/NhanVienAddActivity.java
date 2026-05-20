@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quanlythuvien.db.NhanVienDao;
 import com.example.quanlythuvien.model.NhanVien;
+import com.example.quanlythuvien.util.StaffRoleOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -35,7 +38,7 @@ public class NhanVienAddActivity extends AppCompatActivity {
     private EditText edtTen;
     private EditText edtSdt;
     private EditText edtEmail;
-    private EditText edtChucVu;
+    private Spinner spinnerChucVu;
     private EditText edtPassword;
     private EditText edtDiaChi;
     private TextView tvTitle;
@@ -63,12 +66,21 @@ public class NhanVienAddActivity extends AppCompatActivity {
         edtTen = findViewById(R.id.edtTen);
         edtSdt = findViewById(R.id.edtSdt);
         edtEmail = findViewById(R.id.edtEmail);
-        edtChucVu = findViewById(R.id.edtChucVu);
+        spinnerChucVu = findViewById(R.id.spinnerChucVu);
         edtPassword = findViewById(R.id.edtPassword);
         edtDiaChi = findViewById(R.id.edtDiaChi);
         tvTitle = findViewById(R.id.tvTitle);
         btnConfirm = findViewById(R.id.btnConfirm);
         lblPassword = findViewById(R.id.lblPassword);
+        setupRoleSpinner();
+    }
+
+    private void setupRoleSpinner() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, StaffRoleOptions.labels());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerChucVu.setAdapter(adapter);
+        spinnerChucVu.setSelection(StaffRoleOptions.indexOf(StaffRoleOptions.EMPLOYEE));
     }
 
     private void setupActions() {
@@ -114,7 +126,7 @@ public class NhanVienAddActivity extends AppCompatActivity {
             edtTen.setText(current.ten);
             edtSdt.setText(current.sdt);
             edtEmail.setText(current.email);
-            edtChucVu.setText(current.chucvu);
+            spinnerChucVu.setSelection(StaffRoleOptions.indexOf(current.chucvu));
             edtDiaChi.setText(current.diachi);
 
             lblPassword.setVisibility(View.GONE);
@@ -129,7 +141,9 @@ public class NhanVienAddActivity extends AppCompatActivity {
         String ten = edtTen.getText().toString().trim();
         String sdt = edtSdt.getText().toString().trim();
         String email = edtEmail.getText().toString().trim();
-        String chucvu = edtChucVu.getText().toString().trim();
+        String chucvu = spinnerChucVu.getSelectedItem() == null
+                ? StaffRoleOptions.EMPLOYEE
+                : spinnerChucVu.getSelectedItem().toString();
         String password = edtPassword.getText().toString();
         String diachi = edtDiaChi.getText().toString().trim();
 
@@ -138,8 +152,6 @@ public class NhanVienAddActivity extends AppCompatActivity {
             edtTen.requestFocus();
             return;
         }
-        if (TextUtils.isEmpty(chucvu)) chucvu = "Nhân viên";
-
         if (nvId > 0) {
             // Update
             current.ten = ten;

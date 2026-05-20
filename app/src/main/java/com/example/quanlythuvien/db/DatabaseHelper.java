@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "quanlythuvien.db";
-    public static final int DB_VERSION = 12;
+    public static final int DB_VERSION = 13;
 
     private static DatabaseHelper instance;
 
@@ -230,12 +230,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO PhieuMuon " +
                 "(bd_id, nv_id, ngay_muon, ngay_tra, ngay_tra_goc, lan_gia_han, trangthai, songaytre, tienphat) VALUES " +
                 "(1,  2, '2026-05-01', '2026-05-08', '2026-05-08', 0, 'datra',    0,    0), " +
-                "(2,  2, '2026-05-02', '2026-05-09', '2026-05-09', 0, 'datra',    1,  500), " +
+                "(2,  2, '2026-05-02', '2026-05-09', '2026-05-09', 0, 'datra',    1, 1000), " +
                 "(3,  1, '2026-05-03', '2026-05-10', '2026-05-10', 0, 'datra',    0,    0), " +
-                "(4,  3, '2026-05-04', '2026-05-11', '2026-05-11', 0, 'datra',    3, 1500), " +
+                "(4,  3, '2026-05-04', '2026-05-11', '2026-05-11', 0, 'datra',    3, 3000), " +
                 "(5,  2, '2026-05-05', '2026-05-12', '2026-05-12', 0, 'datra',    0,    0), " +
-                "(6,  3, '2026-05-06', '2026-05-13', '2026-05-13', 0, 'datra',    2, 1000), " +
-                "(7,  1, '2026-05-08', '2026-05-15', '2026-05-15', 0, 'datra',    1,  500), " +
+                "(6,  3, '2026-05-06', '2026-05-13', '2026-05-13', 0, 'datra',    2, 2000), " +
+                "(7,  1, '2026-05-08', '2026-05-15', '2026-05-15', 0, 'datra',    1, 1000), " +
                 "(8,  2, '2026-05-10', '2026-05-17', '2026-05-17', 0, 'datra',    0,    0), " +
                 "(9,  3, '2026-05-12', '2026-05-19', '2026-05-19', 0, 'dangmuon', 0,    0), " +
                 "(10, 1, '2026-05-14', '2026-05-21', '2026-05-21', 0, 'dangmuon', 0,    0), " +
@@ -260,12 +260,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // ── Phiếu trả tháng 5/2026 (cho PM1..PM8) ─────────────────────────────
         db.execSQL("INSERT INTO PhieuTra (pm_id, ngay_tra, tienphat) VALUES " +
                 "(1, '2026-05-07',    0), " +
-                "(2, '2026-05-10',  500), " +
+                "(2, '2026-05-10', 1000), " +
                 "(3, '2026-05-10',    0), " +
-                "(4, '2026-05-14', 1500), " +
+                "(4, '2026-05-14', 3000), " +
                 "(5, '2026-05-12',    0), " +
-                "(6, '2026-05-15', 1000), " +
-                "(7, '2026-05-16',  500), " +
+                "(6, '2026-05-15', 2000), " +
+                "(7, '2026-05-16', 1000), " +
                 "(8, '2026-05-17',    0)");
 
         // ── Chi tiết trả (trigger tự tăng soluong Sach) ───────────────────────

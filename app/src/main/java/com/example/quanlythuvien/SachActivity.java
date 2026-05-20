@@ -29,6 +29,8 @@ import com.example.quanlythuvien.db.SachDao;
 import com.example.quanlythuvien.db.TheLoaiDao;
 import com.example.quanlythuvien.model.Sach;
 import com.example.quanlythuvien.model.TheLoai;
+import com.example.quanlythuvien.util.BookAccessPolicy;
+import com.example.quanlythuvien.util.RoleHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -411,6 +413,10 @@ public class SachActivity extends AppCompatActivity {
     }
 
     private void onSachClick(Sach sach) {
+        if (!BookAccessPolicy.canOpenBookEditScreen(RoleHelper.currentRole(this))) {
+            Toast.makeText(this, BookAccessPolicy.deniedMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
         startActivity(SachDetailActivity.newIntent(this, sach.sachId));
     }
 

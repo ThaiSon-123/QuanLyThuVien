@@ -53,6 +53,7 @@ public class PhieuTraAddActivity extends AppCompatActivity {
     private TextView tvFineHan;
     private TextView tvFineNgayTra;
     private TextView tvFineDays;
+    private TextView tvFineRate;
     private TextView tvFineTotal;
     private TextView btnConfirm;
 
@@ -96,6 +97,7 @@ public class PhieuTraAddActivity extends AppCompatActivity {
         tvFineHan = findViewById(R.id.tvFineHan);
         tvFineNgayTra = findViewById(R.id.tvFineNgayTra);
         tvFineDays = findViewById(R.id.tvFineDays);
+        tvFineRate = findViewById(R.id.tvFineRate);
         tvFineTotal = findViewById(R.id.tvFineTotal);
         btnConfirm = findViewById(R.id.btnConfirm);
     }
@@ -188,11 +190,14 @@ public class PhieuTraAddActivity extends AppCompatActivity {
         String today = FineCalculator.today();
         int days = FineCalculator.daysOverdue(currentPm.ngayTra, today);
         if (days > 0) {
-            currentFine = FineCalculator.calcFine(this, currentPm.ngayTra, today);
+            double finePerDay = FineCalculator.finePerDay(this);
+            currentFine = FineCalculator.calcFine(currentPm.ngayTra, today,
+                    finePerDay, totalBorrowedBooks(currentPm.chiTiet));
             cardFinePreview.setVisibility(View.VISIBLE);
             tvFineHan.setText(MuonTraActivity.formatDate(currentPm.ngayTra));
             tvFineNgayTra.setText(MuonTraActivity.formatDate(today));
             tvFineDays.setText(days + " ngày");
+            tvFineRate.setText(FineCalculator.formatVnd(finePerDay) + "/ngày/quyển");
             tvFineTotal.setText(FineCalculator.formatVnd(currentFine));
             btnConfirm.setText("Xác nhận trả sách (" + FineCalculator.formatVnd(currentFine) + ")");
         } else {
@@ -200,6 +205,15 @@ public class PhieuTraAddActivity extends AppCompatActivity {
             cardFinePreview.setVisibility(View.GONE);
             btnConfirm.setText("Xác nhận trả sách");
         }
+    }
+
+    private int totalBorrowedBooks(List<ChiTietMuon> details) {
+        int total = 0;
+        if (details == null) return total;
+        for (ChiTietMuon ct : details) {
+            total += Math.max(0, ct.soluong);
+        }
+        return total;
     }
 
     private void showPickState() {

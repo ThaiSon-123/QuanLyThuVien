@@ -54,9 +54,21 @@ public class FineCalculator {
         return daysOverdue(ngayHanTra, ngayTraThucTe) * finePerDay;
     }
 
+    /** Tổng tiền phạt theo đơn giá và số lượng sách bị trễ hạn. */
+    public static double calcFine(String ngayHanTra, String ngayTraThucTe,
+                                  double finePerDay, int bookQuantity) {
+        return daysOverdue(ngayHanTra, ngayTraThucTe) * finePerDay * Math.max(0, bookQuantity);
+    }
+
     /** Tổng tiền phạt theo đơn giá lấy từ cấu hình. */
     public static double calcFine(Context ctx, String ngayHanTra, String ngayTraThucTe) {
         return calcFine(ngayHanTra, ngayTraThucTe, finePerDay(ctx));
+    }
+
+    /** Tổng tiền phạt theo cấu hình và số lượng sách bị trễ hạn. */
+    public static double calcFine(Context ctx, String ngayHanTra, String ngayTraThucTe,
+                                  int bookQuantity) {
+        return calcFine(ngayHanTra, ngayTraThucTe, finePerDay(ctx), bookQuantity);
     }
 
     /** Hôm nay theo định dạng yyyy-MM-dd. */

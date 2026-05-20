@@ -214,6 +214,9 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
             ct.soluong++;
         }
         renderSelected();
+        Toast.makeText(this,
+                "Đã thêm sách " + s.ten + " vào phiếu mượn",
+                Toast.LENGTH_SHORT).show();
     }
 
     private void onRemoveSach(ChiTietMuon ct) {

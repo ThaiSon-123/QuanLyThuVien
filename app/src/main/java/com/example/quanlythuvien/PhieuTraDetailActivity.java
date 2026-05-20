@@ -156,11 +156,21 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
             // Ưu tiên dùng giá trị đã lưu DB; nếu = 0 thì compute lại
             double tien = pt.tienphat > 0
                     ? pt.tienphat
-                    : FineCalculator.calcFine(this, pt.ngayHanTra, pt.ngayTra);
+                    : FineCalculator.calcFine(this, pt.ngayHanTra, pt.ngayTra,
+                            totalBorrowedBooks(pt.chiTiet));
             tvTienPhat.setText(FineCalculator.formatVnd(tien));
         } else {
             cardTienPhat.setVisibility(View.GONE);
         }
+    }
+
+    private int totalBorrowedBooks(java.util.List<com.example.quanlythuvien.model.ChiTietMuon> details) {
+        int total = 0;
+        if (details == null) return total;
+        for (com.example.quanlythuvien.model.ChiTietMuon ct : details) {
+            total += Math.max(0, ct.soluong);
+        }
+        return total;
     }
 
     private void goHome() {

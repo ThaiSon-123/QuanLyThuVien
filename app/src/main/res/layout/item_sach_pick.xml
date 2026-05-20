@@ -7,14 +7,30 @@
     android:paddingHorizontal="14dp"
     android:paddingVertical="10dp">
 
-    <TextView
-        android:id="@+id/tvTen"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Sách ngữ văn lớp 6 tập 1"
-        android:textColor="#000000"
-        android:textSize="14sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sách ngữ văn lớp 6 tập 1"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvSoLuongCon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Còn 0 quyển"
+            android:textColor="#6F7782"
+            android:textSize="12sp" />
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/btnAdd"

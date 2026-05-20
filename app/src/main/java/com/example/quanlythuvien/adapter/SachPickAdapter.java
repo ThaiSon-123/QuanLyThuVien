@@ -46,6 +46,7 @@ public class SachPickAdapter extends RecyclerView.Adapter<SachPickAdapter.VH> {
     public void onBindViewHolder(@NonNull VH h, int position) {
         Sach s = data.get(position);
         h.tvTen.setText(s.ten);
+        h.tvSoLuongCon.setText("Còn " + s.soluong + " quyển");
         h.btnAdd.setOnClickListener(v -> {
             if (listener != null) listener.onAdd(s);
         });
@@ -58,11 +59,13 @@ public class SachPickAdapter extends RecyclerView.Adapter<SachPickAdapter.VH> {
 
     static class VH extends RecyclerView.ViewHolder {
         TextView tvTen;
+        TextView tvSoLuongCon;
         View btnAdd;
 
         VH(@NonNull View v) {
             super(v);
             tvTen = v.findViewById(R.id.tvTen);
+            tvSoLuongCon = v.findViewById(R.id.tvSoLuongCon);
             btnAdd = v.findViewById(R.id.btnAdd);
         }
     }

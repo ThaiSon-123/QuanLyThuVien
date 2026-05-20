@@ -12,4 +12,11 @@ public class FineCalculatorTest {
 
         assertEquals(2250, fine, 0.0);
     }
+
+    @Test
+    public void calcFineMultipliesByBorrowedBookQuantity() {
+        double fine = FineCalculator.calcFine("2026-05-09", "2026-05-12", 750, 2);
+
+        assertEquals(4500, fine, 0.0);
+    }
 }

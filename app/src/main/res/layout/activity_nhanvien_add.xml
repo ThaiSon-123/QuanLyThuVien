@@ -133,19 +133,14 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/edtChucVu"
+            <Spinner
+                android:id="@+id/spinnerChucVu"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:layout_marginTop="6dp"
                 android:paddingHorizontal="12dp"
                 android:background="@drawable/bg_input_field"
-                android:hint="Nhân viên / Quản lý"
-                android:textColorHint="#9AA3AE"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:singleLine="true"
-                android:inputType="text" />
+                android:spinnerMode="dropdown" />
 
             <TextView
                 android:id="@+id/lblPassword"

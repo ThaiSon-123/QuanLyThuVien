@@ -110,7 +110,11 @@ public class PhieuTraDao {
                 catch (NumberFormatException ignored) { }
             }
         }
-        double tienphat = songaytre * finePerDay;
+        int totalBooks = 0;
+        for (ChiTietMuon ct : details) {
+            totalBooks += Math.max(0, ct.soluong);
+        }
+        double tienphat = FineCalculator.calcFine(ngayHanTra, ngayTra, finePerDay, totalBooks);
 
         db.beginTransaction();
         try {
@@ -157,7 +161,9 @@ public class PhieuTraDao {
             db.execSQL("UPDATE PhieuTra " +
                     "SET tienphat = MAX(0, CAST(julianday(ngay_tra) - julianday(" +
                     "    (SELECT pm.ngay_tra FROM PhieuMuon pm WHERE pm.pm_id = PhieuTra.pm_id)" +
-                    ") AS INTEGER)) * ? " +
+                    ") AS INTEGER)) * IFNULL((" +
+                    "    SELECT SUM(ctm.soluong) FROM ChiTietMuon ctm WHERE ctm.pm_id = PhieuTra.pm_id" +
+                    "), 0) * ? " +
                     "WHERE EXISTS (SELECT 1 FROM PhieuMuon pm WHERE pm.pm_id = PhieuTra.pm_id)",
                     new Object[]{finePerDay});
 
@@ -167,7 +173,8 @@ public class PhieuTraDao {
                     "        FROM PhieuTra pt WHERE pt.pm_id = PhieuMuon.pm_id LIMIT 1" +
                     "    ), " +
                     "    tienphat = (" +
-                    "        SELECT MAX(0, CAST(julianday(pt.ngay_tra) - julianday(PhieuMuon.ngay_tra) AS INTEGER)) * ? " +
+                    "        SELECT MAX(0, CAST(julianday(pt.ngay_tra) - julianday(PhieuMuon.ngay_tra) AS INTEGER)) * " +
+                    "               IFNULL((SELECT SUM(ctm.soluong) FROM ChiTietMuon ctm WHERE ctm.pm_id = PhieuMuon.pm_id), 0) * ? " +
                     "        FROM PhieuTra pt WHERE pt.pm_id = PhieuMuon.pm_id LIMIT 1" +
                     "    ) " +
                     "WHERE EXISTS (SELECT 1 FROM PhieuTra pt WHERE pt.pm_id = PhieuMuon.pm_id)",
