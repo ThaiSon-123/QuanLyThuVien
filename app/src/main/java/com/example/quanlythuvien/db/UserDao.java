@@ -42,6 +42,18 @@ public class UserDao {
         return null;
     }
 
+    public String findUsernameByEmail(String email) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        String sql = "SELECT u.username FROM Users u " +
+                "JOIN NhanVien nv ON nv.user_id = u.user_id " +
+                "WHERE nv.email = ? AND u.status = 1 " +
+                "ORDER BY u.user_id LIMIT 1";
+        try (Cursor c = db.rawQuery(sql, new String[]{email})) {
+            if (c.moveToFirst()) return c.getString(0);
+        }
+        return null;
+    }
+
     public boolean resetPassword(String username, String newPassword) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues cv = new ContentValues();

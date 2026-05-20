@@ -97,12 +97,12 @@ public class PhieuAdapter extends RecyclerView.Adapter<PhieuAdapter.VH> {
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_datra);
         } else if ("trehan".equals(r.status)) {
             holder.tvStatus.setVisibility(View.VISIBLE);
-            holder.tvStatus.setText("Trễ hạn");
+            holder.tvStatus.setText("Quá hạn");
             holder.tvStatus.setTextColor(0xFFFFFFFF);
             GradientDrawable red = new GradientDrawable();
             red.setShape(GradientDrawable.RECTANGLE);
             red.setCornerRadius(24f);
-            red.setColor(0xFFE04D4D);
+            red.setColor(0xFFBA1A1A);
             holder.tvStatus.setBackground(red);
         } else {
             holder.tvStatus.setVisibility(View.VISIBLE);

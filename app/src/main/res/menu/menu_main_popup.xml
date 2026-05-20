@@ -6,5 +6,6 @@
     <item android:id="@+id/menu_report"  android:title="Báo cáo"       android:icon="@drawable/ic_report" />
     <item android:id="@+id/menu_contact" android:title="Liên hệ"       android:icon="@drawable/ic_contact" />
     <item android:id="@+id/menu_staff"   android:title="Nhân viên"     android:icon="@drawable/ic_people" />
+    <item android:id="@+id/menu_settings" android:title="Cấu hình hệ thống" android:icon="@drawable/ic_filter" />
     <item android:id="@+id/menu_logout"  android:title="Đăng xuất"     android:icon="@drawable/ic_logout" />
 </menu>

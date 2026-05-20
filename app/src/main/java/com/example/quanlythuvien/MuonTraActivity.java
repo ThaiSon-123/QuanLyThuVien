@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.Normalizer;
 
@@ -26,6 +27,7 @@ import com.example.quanlythuvien.db.PhieuMuonDao;
 import com.example.quanlythuvien.db.PhieuTraDao;
 import com.example.quanlythuvien.model.PhieuMuon;
 import com.example.quanlythuvien.model.PhieuTra;
+import com.example.quanlythuvien.util.FineCalculator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -38,6 +40,11 @@ public class MuonTraActivity extends AppCompatActivity {
 
     private static final int TAB_MUON = 0;
     private static final int TAB_TRA = 1;
+
+    /** Filter từ Intent. Set qua extra {@link #EXTRA_FILTER}. */
+    public static final String EXTRA_FILTER = "filter";
+    public static final String FILTER_OVERDUE  = "overdue";
+    public static final String FILTER_NEAR_DUE = "near_due";
 
     private PhieuMuonDao phieuMuonDao;
     private PhieuTraDao phieuTraDao;
@@ -85,6 +92,17 @@ public class MuonTraActivity extends AppCompatActivity {
         setupBottomNav();
 
         selectTab(TAB_MUON);
+
+        // Áp filter khi đến từ Dashboard alert
+        String filter = getIntent().getStringExtra(EXTRA_FILTER);
+        if (FILTER_OVERDUE.equals(filter) || FILTER_NEAR_DUE.equals(filter)) {
+            // Hiện chip filter ngay khi vào, sau đó applyFilter sẽ lọc list
+            currentStatus = filter;  // re-use field để chỉ lọc phiếu mượn theo filter này
+            applyFilter();
+            Toast.makeText(this,
+                    FILTER_OVERDUE.equals(filter) ? "Lọc: phiếu QUÁ HẠN" : "Lọc: phiếu sắp đến hạn",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void bindViews() {
@@ -163,10 +181,29 @@ public class MuonTraActivity extends AppCompatActivity {
 
     private void applyFilter() {
         String kw = norm(currentKeyword);
+        // Tính trước "today" và "today + nearDays" để filter theo ngày khi cần
+        String today = FineCalculator.today();
+        int nearDays = com.example.quanlythuvien.db.CauHinhDao.getInstance(this).nearDueDays();
+        String nearLimit = addDaysIso(today, nearDays);
+
         List<PhieuAdapter.Row> filtered = new ArrayList<>();
         for (PhieuAdapter.Row r : allRows) {
             if (currentTab == TAB_MUON && !STATUS_ALL.equals(currentStatus)) {
-                if (!currentStatus.equals(r.status)) continue;
+                if (FILTER_OVERDUE.equals(currentStatus)) {
+                    // Chỉ phiếu chưa trả + ngày hạn < today (cần data trên Row — dùng r.status từ logic loadData)
+                    if (!"trehan".equals(r.status)) continue;
+                } else if (FILTER_NEAR_DUE.equals(currentStatus)) {
+                    // Phiếu chưa trả, ngày_tra ∈ [today, today + nearDays]
+                    // Row không có ngày_tra → cần lookup PhieuMuon; rẻ hơn: lưu rawDate trong Row.
+                    // Tạm: chỉ giữ phiếu "dangmuon" (chưa quá hạn), dùng dữ liệu pm gốc
+                    PhieuMuon pm = phieuMuonDao.findById(r.id);
+                    if (pm == null || "datra".equals(pm.trangthai)) continue;
+                    if (pm.ngayTra == null) continue;
+                    if (pm.ngayTra.compareTo(today) < 0) continue;      // đã quá hạn → loại khỏi near_due
+                    if (pm.ngayTra.compareTo(nearLimit) > 0) continue;  // ngoài cửa sổ near_due
+                } else {
+                    if (!currentStatus.equals(r.status)) continue;
+                }
             }
 
             if (!kw.isEmpty() && !norm(r.ma).contains(kw) && !norm(r.tenBanDoc).contains(kw)) {
@@ -306,15 +343,22 @@ public class MuonTraActivity extends AppCompatActivity {
     private void loadData() {
         allRows = new ArrayList<>();
         if (currentTab == TAB_MUON) {
+            String today = FineCalculator.today();
             List<PhieuMuon> list = phieuMuonDao.listAll();
             for (PhieuMuon p : list) {
+                // Phiếu chưa trả mà đã quá ngày hạn → coi như "trehan" để hiện đỏ
+                String status = p.trangthai;
+                if (!"datra".equals(status)
+                        && FineCalculator.daysOverdue(p.ngayTra, today) > 0) {
+                    status = "trehan";
+                }
                 allRows.add(new PhieuAdapter.Row(
                         p.pmId,
                         p.getMaPhieu(),
                         p.tenBanDoc,
                         formatDate(p.ngayMuon),
                         null,
-                        p.trangthai));
+                        status));
             }
         } else {
             List<PhieuTra> list = phieuTraDao.listAll();
@@ -347,6 +391,20 @@ public class MuonTraActivity extends AppCompatActivity {
         return ngayTraThucTe.compareTo(ngayHanTra) <= 0 ? "dunghạn" : "trehan";
     }
 
+
+    /** Cộng N ngày vào chuỗi yyyy-MM-dd. */
+    static String addDaysIso(String iso, int days) {
+        if (iso == null) return null;
+        try {
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(fmt.parse(iso));
+            cal.add(java.util.Calendar.DAY_OF_MONTH, days);
+            return fmt.format(cal.getTime());
+        } catch (Exception e) {
+            return iso;
+        }
+    }
 
     public static String formatDate(String iso) {
         if (iso == null || iso.isEmpty()) return "";

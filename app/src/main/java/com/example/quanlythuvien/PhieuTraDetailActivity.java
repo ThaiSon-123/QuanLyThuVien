@@ -13,9 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.widget.LinearLayout;
+
 import com.example.quanlythuvien.adapter.ChiTietMuonAdapter;
 import com.example.quanlythuvien.db.PhieuTraDao;
 import com.example.quanlythuvien.model.PhieuTra;
+import com.example.quanlythuvien.util.FineCalculator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class PhieuTraDetailActivity extends AppCompatActivity {
@@ -37,6 +40,9 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
     private TextView tvTinhTrang;
     private TextView tvBanDoc;
     private TextView tvMaPhieuMuon;
+    private LinearLayout cardTienPhat;
+    private TextView tvTienPhatLabel;
+    private TextView tvTienPhat;
 
     private int ptId;
     private int linkedPmId;
@@ -69,6 +75,9 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
         tvTinhTrang = findViewById(R.id.tvTinhTrang);
         tvBanDoc = findViewById(R.id.tvBanDoc);
         tvMaPhieuMuon = findViewById(R.id.tvMaPhieuMuon);
+        cardTienPhat = findViewById(R.id.cardTienPhat);
+        tvTienPhatLabel = findViewById(R.id.tvTienPhatLabel);
+        tvTienPhat = findViewById(R.id.tvTienPhat);
     }
 
     private void setupRecycler() {
@@ -131,13 +140,27 @@ public class PhieuTraDetailActivity extends AppCompatActivity {
         boolean treHan = pt.ngayTra != null && pt.ngayHanTra != null
                 && pt.ngayTra.compareTo(pt.ngayHanTra) > 0;
         tvTinhTrang.setVisibility(View.VISIBLE);
-        tvTinhTrang.setText(treHan ? "Trễ hạn" : "Đúng hạn");
+        tvTinhTrang.setText(treHan ? "Quá hạn" : "Đúng hạn");
         GradientDrawable pill = new GradientDrawable();
         pill.setShape(GradientDrawable.RECTANGLE);
         pill.setCornerRadius(24f);
-        pill.setColor(treHan ? 0xFFE04D4D : 0xFF2F8A3E);
+        pill.setColor(treHan ? 0xFFBA1A1A : 0xFF2F8A3E);
         tvTinhTrang.setBackground(pill);
         tvTinhTrang.setTextColor(0xFFFFFFFF);
+
+        // Card tiền phạt — chỉ hiện khi trễ hạn
+        int days = FineCalculator.daysOverdue(pt.ngayHanTra, pt.ngayTra);
+        if (days > 0) {
+            cardTienPhat.setVisibility(View.VISIBLE);
+            tvTienPhatLabel.setText("TIỀN PHẠT (TRỄ " + days + " NGÀY)");
+            // Ưu tiên dùng giá trị đã lưu DB; nếu = 0 thì compute lại
+            double tien = pt.tienphat > 0
+                    ? pt.tienphat
+                    : FineCalculator.calcFine(this, pt.ngayHanTra, pt.ngayTra);
+            tvTienPhat.setText(FineCalculator.formatVnd(tien));
+        } else {
+            cardTienPhat.setVisibility(View.GONE);
+        }
     }
 
     private void goHome() {

@@ -107,6 +107,18 @@ public class BanDocDao {
         return 0;
     }
 
+    /** Tổng tiền phạt đã nộp (cộng từ tất cả PhieuTra của các phiếu mượn của bạn đọc này). */
+    public double sumTienPhat(int bdId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        String sql = "SELECT COALESCE(SUM(pt.tienphat),0) FROM PhieuTra pt " +
+                "JOIN PhieuMuon pm ON pm.pm_id = pt.pm_id " +
+                "WHERE pm.bd_id = ?";
+        try (Cursor c = db.rawQuery(sql, new String[]{String.valueOf(bdId)})) {
+            if (c.moveToFirst()) return c.getDouble(0);
+        }
+        return 0;
+    }
+
     public long insert(BanDoc b) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues cv = new ContentValues();

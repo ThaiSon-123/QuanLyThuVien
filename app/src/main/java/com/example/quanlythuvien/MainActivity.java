@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.quanlythuvien.db.CauHinhDao;
 import com.example.quanlythuvien.db.StatDao;
 import com.example.quanlythuvien.db.UserDao;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,7 +27,19 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvBorrowCount;
     private TextView tvReturnCount;
     private StatDao statDao;
+    private CauHinhDao cauHinhDao;
     private String currentRole;
+
+    // Alert views
+    private android.widget.LinearLayout alertsGroup;
+    private android.widget.LinearLayout alertOverdue;
+    private android.widget.LinearLayout alertNearDue;
+    private android.widget.LinearLayout alertLowStock;
+    private TextView tvAlertOverdue;
+    private TextView tvAlertNearDue;
+    private TextView tvAlertNearDueSub;
+    private TextView tvAlertLowStock;
+    private TextView tvAlertLowStockSub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +47,45 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         statDao = new StatDao(this);
+        cauHinhDao = CauHinhDao.getInstance(this);
         currentRole = getSharedPreferences(LoginActivity.PREFS_NAME, MODE_PRIVATE)
                 .getString(LoginActivity.KEY_ROLE, "");
 
         tvBorrowCount = findViewById(R.id.tvBorrowCount);
         tvReturnCount = findViewById(R.id.tvReturnCount);
 
+        alertsGroup = findViewById(R.id.alertsGroup);
+        alertOverdue = findViewById(R.id.alertOverdue);
+        alertNearDue = findViewById(R.id.alertNearDue);
+        alertLowStock = findViewById(R.id.alertLowStock);
+        tvAlertOverdue = findViewById(R.id.tvAlertOverdue);
+        tvAlertNearDue = findViewById(R.id.tvAlertNearDue);
+        tvAlertNearDueSub = findViewById(R.id.tvAlertNearDueSub);
+        tvAlertLowStock = findViewById(R.id.tvAlertLowStock);
+        tvAlertLowStockSub = findViewById(R.id.tvAlertLowStockSub);
+
         setupTopBar();
         setupShortcuts();
+        setupAlerts();
         setupBottomNav();
+    }
+
+    private void setupAlerts() {
+        alertOverdue.setOnClickListener(v -> {
+            Intent i = new Intent(this, MuonTraActivity.class);
+            i.putExtra(MuonTraActivity.EXTRA_FILTER, MuonTraActivity.FILTER_OVERDUE);
+            startActivity(i);
+        });
+        alertNearDue.setOnClickListener(v -> {
+            Intent i = new Intent(this, MuonTraActivity.class);
+            i.putExtra(MuonTraActivity.EXTRA_FILTER, MuonTraActivity.FILTER_NEAR_DUE);
+            startActivity(i);
+        });
+        alertLowStock.setOnClickListener(v -> {
+            Intent i = new Intent(this, SachActivity.class);
+            i.putExtra(SachActivity.EXTRA_FILTER, SachActivity.FILTER_LOW_STOCK);
+            startActivity(i);
+        });
     }
 
     @Override
@@ -54,6 +97,31 @@ public class MainActivity extends AppCompatActivity {
     private void refreshStats() {
         tvBorrowCount.setText(String.valueOf(statDao.countBorrow()));
         tvReturnCount.setText(String.valueOf(statDao.countReturn()));
+        refreshAlerts();
+    }
+
+    private void refreshAlerts() {
+        // Đảm bảo đọc cấu hình mới nhất sau khi admin sửa
+        cauHinhDao.invalidate();
+        int nearDays = cauHinhDao.nearDueDays();
+        int lowStock = cauHinhDao.lowStockThreshold();
+
+        int overdue = statDao.countOverdue();
+        int nearDue = statDao.countNearDue(nearDays);
+        int low     = statDao.countLowStock(lowStock);
+
+        alertOverdue.setVisibility(overdue > 0 ? View.VISIBLE : View.GONE);
+        alertNearDue.setVisibility(nearDue > 0 ? View.VISIBLE : View.GONE);
+        alertLowStock.setVisibility(low > 0 ? View.VISIBLE : View.GONE);
+
+        tvAlertOverdue.setText(overdue + " phiếu QUÁ HẠN");
+        tvAlertNearDue.setText(nearDue + " phiếu sắp hết hạn");
+        tvAlertNearDueSub.setText("Trong " + nearDays + " ngày tới");
+        tvAlertLowStock.setText(low + " sách sắp hết kho");
+        tvAlertLowStockSub.setText("Còn ≤ " + lowStock + " quyển");
+
+        alertsGroup.setVisibility(
+                (overdue + nearDue + low) > 0 ? View.VISIBLE : View.GONE);
     }
 
     private void setupTopBar() {
@@ -98,16 +166,19 @@ public class MainActivity extends AppCompatActivity {
 
         popup.getMenu().findItem(R.id.menu_staff)
                 .setVisible(ROLE_ADMIN.equals(currentRole));
+        popup.getMenu().findItem(R.id.menu_settings)
+                .setVisible(ROLE_ADMIN.equals(currentRole));
 
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.menu_book)    { openBook();    return true; }
-            if (id == R.id.menu_borrow)  { openBorrow();  return true; }
-            if (id == R.id.menu_reader)  { openReader();  return true; }
-            if (id == R.id.menu_report)  { openReport();  return true; }
-            if (id == R.id.menu_contact) { openContact(); return true; }
-            if (id == R.id.menu_staff)   { openStaff();   return true; }
-            if (id == R.id.menu_logout)  { confirmLogout(); return true; }
+            if (id == R.id.menu_book)     { openBook();     return true; }
+            if (id == R.id.menu_borrow)   { openBorrow();   return true; }
+            if (id == R.id.menu_reader)   { openReader();   return true; }
+            if (id == R.id.menu_report)   { openReport();   return true; }
+            if (id == R.id.menu_contact)  { openContact();  return true; }
+            if (id == R.id.menu_staff)    { openStaff();    return true; }
+            if (id == R.id.menu_settings) { openSettings(); return true; }
+            if (id == R.id.menu_logout)   { confirmLogout(); return true; }
             return false;
         });
         popup.show();
@@ -141,6 +212,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.recentBook).setOnClickListener(v -> openBook());
         findViewById(R.id.recentReader).setOnClickListener(v -> openReader());
         findViewById(R.id.recentStaff).setOnClickListener(v -> openStaff());
+
+        // Ẩn các shortcut Nhân viên cho user role nhân viên
+        boolean isAdmin = ROLE_ADMIN.equals(currentRole);
+        findViewById(R.id.favStaff).setVisibility(isAdmin ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.recentStaff).setVisibility(isAdmin ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void setupBottomNav() {
@@ -208,6 +284,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         startActivity(new Intent(this, NhanVienActivity.class));
+    }
+
+    private void openSettings() {
+        if (!ROLE_ADMIN.equals(currentRole)) {
+            toast("Bạn không có quyền truy cập");
+            return;
+        }
+        startActivity(new Intent(this, CauHinhActivity.class));
     }
 
     private void toast(String msg) {

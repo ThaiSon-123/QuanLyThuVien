@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.quanlythuvien.adapter.SachPickAdapter;
 import com.example.quanlythuvien.adapter.SachSelectedAdapter;
 import com.example.quanlythuvien.db.BanDocDao;
+import com.example.quanlythuvien.db.CauHinhDao;
 import com.example.quanlythuvien.db.PhieuMuonDao;
 import com.example.quanlythuvien.db.SachDao;
 import com.example.quanlythuvien.model.BanDoc;
@@ -48,6 +49,9 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
     private BanDoc selectedBanDoc;
     private Calendar selectedHanTra;
 
+    /** Hạn mức số sách (mặc định, sẽ override từ CauHinh). */
+    private int maxBooksPerSlip = 5;
+
     private final java.util.LinkedHashMap<Integer, ChiTietMuon> selected = new java.util.LinkedHashMap<>();
 
     @Override
@@ -58,6 +62,10 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
         sachDao = new SachDao(this);
         banDocDao = new BanDocDao(this);
         phieuMuonDao = new PhieuMuonDao(this);
+        CauHinhDao ch = CauHinhDao.getInstance(this);
+        maxBooksPerSlip = ch.maxBooksPerSlip();
+        selectedHanTra = Calendar.getInstance();
+        selectedHanTra.add(Calendar.DAY_OF_MONTH, ch.defaultBorrowDays());
 
         bindViews();
         setupRecyclers();
@@ -65,6 +73,8 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
         setupBottomNav();
 
         tvMaPhieu.setText("PM-" + phieuMuonDao.previewNextId());
+        tvHanTra.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                .format(selectedHanTra.getTime()));
         loadSachAvailable();
         renderSelected();
     }
@@ -155,22 +165,23 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
         if (chuaTra.isEmpty()) return;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(banDoc.ten).append(" có ").append(chuaTra.size())
+        sb.append(banDoc.ten).append(" đang có ").append(chuaTra.size())
                 .append(" phiếu mượn chưa trả:\n\n");
         for (PhieuMuon pm : chuaTra) {
             sb.append("• PM-").append(pm.pmId)
-                    .append("  (mượn: ").append(pm.ngayMuon).append(")\n");
+                    .append("  (mượn: ").append(pm.ngayMuon)
+                    .append(" · hạn: ").append(pm.ngayTra).append(")\n");
         }
-        sb.append("\nBạn có muốn xem chi tiết?");
 
         new AlertDialog.Builder(this)
-                .setTitle("Cảnh báo")
+                .setTitle("Bạn đọc đang có phiếu mượn chưa trả")
                 .setMessage(sb.toString())
-                .setPositiveButton("Xem phiếu mượn", (d, w) -> {
+                .setPositiveButton("Tiếp tục lập", null)
+                .setNegativeButton("Xem phiếu mượn", (d, w) -> {
                     int firstPmId = chuaTra.get(0).pmId;
                     startActivity(PhieuMuonDetailActivity.newIntent(this, firstPmId));
+                    finish();  // đóng màn lập phiếu để user xem phiếu cũ
                 })
-                .setNegativeButton("Tiếp tục lập phiếu", null)
                 .show();
     }
 
@@ -187,6 +198,14 @@ public class PhieuMuonAddActivity extends AppCompatActivity {
     }
 
     private void onAddSach(Sach s) {
+        int currentTotal = 0;
+        for (ChiTietMuon ct : selected.values()) currentTotal += ct.soluong;
+        if (currentTotal + 1 > maxBooksPerSlip) {
+            Toast.makeText(this,
+                    "Không thể mượn quá " + maxBooksPerSlip + " sách",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         ChiTietMuon ct = selected.get(s.sachId);
         if (ct == null) {
             ct = new ChiTietMuon(s.sachId, s.ten, 1);

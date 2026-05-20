@@ -19,6 +19,7 @@ import com.example.quanlythuvien.db.PhieuMuonDao;
 import com.example.quanlythuvien.db.PhieuTraDao;
 import com.example.quanlythuvien.model.ChiTietMuon;
 import com.example.quanlythuvien.model.PhieuMuon;
+import com.example.quanlythuvien.util.FineCalculator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -27,6 +28,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class PhieuTraAddActivity extends AppCompatActivity {
+
+    public static final String EXTRA_PM_ID = "pm_id";
+
+    public static android.content.Intent newIntent(android.content.Context ctx, int pmId) {
+        android.content.Intent i = new android.content.Intent(ctx, PhieuTraAddActivity.class);
+        i.putExtra(EXTRA_PM_ID, pmId);
+        return i;
+    }
 
     private PhieuMuonDao phieuMuonDao;
     private PhieuTraDao phieuTraDao;
@@ -40,7 +49,15 @@ public class PhieuTraAddActivity extends AppCompatActivity {
     private TextView tvBanDoc;
     private TextView tvPickEmpty;
 
+    private LinearLayout cardFinePreview;
+    private TextView tvFineHan;
+    private TextView tvFineNgayTra;
+    private TextView tvFineDays;
+    private TextView tvFineTotal;
+    private TextView btnConfirm;
+
     private PhieuMuon currentPm;
+    private double currentFine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +72,18 @@ public class PhieuTraAddActivity extends AppCompatActivity {
         setupActions();
         setupBottomNav();
 
-        showPickState();
-        loadPhieuMuonChuaTra();
+        int preselectPmId = getIntent().getIntExtra(EXTRA_PM_ID, 0);
+        if (preselectPmId > 0) {
+            // Auto-fill từ phiếu mượn được truyền vào
+            PhieuMuon p = new PhieuMuon();
+            p.pmId = preselectPmId;
+            onPickPhieuMuon(p);
+            // Vẫn load list để khi đổi phiếu thì có sẵn
+            loadPhieuMuonChuaTra();
+        } else {
+            showPickState();
+            loadPhieuMuonChuaTra();
+        }
     }
 
     private void bindViews() {
@@ -65,6 +92,12 @@ public class PhieuTraAddActivity extends AppCompatActivity {
         tvMaPhieuMuon = findViewById(R.id.tvMaPhieuMuon);
         tvBanDoc = findViewById(R.id.tvBanDoc);
         tvPickEmpty = findViewById(R.id.tvPickEmpty);
+        cardFinePreview = findViewById(R.id.cardFinePreview);
+        tvFineHan = findViewById(R.id.tvFineHan);
+        tvFineNgayTra = findViewById(R.id.tvFineNgayTra);
+        tvFineDays = findViewById(R.id.tvFineDays);
+        tvFineTotal = findViewById(R.id.tvFineTotal);
+        btnConfirm = findViewById(R.id.btnConfirm);
     }
 
     private void setupRecyclers() {
@@ -85,6 +118,7 @@ public class PhieuTraAddActivity extends AppCompatActivity {
             currentPm = null;
             tvMaPhieuMuon.setText("");
             tvBanDoc.setText("");
+            updateFinePreview();
             showPickState();
             loadPhieuMuonChuaTra();
         });
@@ -140,7 +174,32 @@ public class PhieuTraAddActivity extends AppCompatActivity {
         tvMaPhieuMuon.setText(currentPm.getMaPhieu());
         tvBanDoc.setText(currentPm.tenBanDoc == null ? "" : currentPm.tenBanDoc);
         selectedAdapter.submit(currentPm.chiTiet);
+        updateFinePreview();
         showSelectedState();
+    }
+
+    private void updateFinePreview() {
+        if (currentPm == null) {
+            cardFinePreview.setVisibility(View.GONE);
+            btnConfirm.setText("Xác nhận trả sách");
+            currentFine = 0;
+            return;
+        }
+        String today = FineCalculator.today();
+        int days = FineCalculator.daysOverdue(currentPm.ngayTra, today);
+        if (days > 0) {
+            currentFine = FineCalculator.calcFine(this, currentPm.ngayTra, today);
+            cardFinePreview.setVisibility(View.VISIBLE);
+            tvFineHan.setText(MuonTraActivity.formatDate(currentPm.ngayTra));
+            tvFineNgayTra.setText(MuonTraActivity.formatDate(today));
+            tvFineDays.setText(days + " ngày");
+            tvFineTotal.setText(FineCalculator.formatVnd(currentFine));
+            btnConfirm.setText("Xác nhận trả sách (" + FineCalculator.formatVnd(currentFine) + ")");
+        } else {
+            currentFine = 0;
+            cardFinePreview.setVisibility(View.GONE);
+            btnConfirm.setText("Xác nhận trả sách");
+        }
     }
 
     private void showPickState() {
@@ -167,7 +226,10 @@ public class PhieuTraAddActivity extends AppCompatActivity {
         long ptId = phieuTraDao.insertWithDetails(currentPm.pmId, today,
                 new java.util.ArrayList<ChiTietMuon>(currentPm.chiTiet));
         if (ptId > 0) {
-            Toast.makeText(this, "Đã trả sách (PT-" + ptId + ")", Toast.LENGTH_SHORT).show();
+            String msg = currentFine > 0
+                    ? "Đã trả sách (PT-" + ptId + ") · Phạt " + FineCalculator.formatVnd(currentFine)
+                    : "Đã trả sách (PT-" + ptId + ")";
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             setResult(RESULT_OK);
             finish();
         } else {

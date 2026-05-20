@@ -180,6 +180,171 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- DASHBOARD CẢNH BÁO -->
+            <LinearLayout
+                android:id="@+id/alertsGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CẦN XỬ LÝ"
+                    android:textColor="#4B4B4B"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08" />
+
+                <LinearLayout
+                    android:id="@+id/alertOverdue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="14dp"
+                    android:background="@drawable/bg_alert_red"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_alarm"
+                        android:contentDescription="Quá hạn" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvAlertOverdue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 phiếu QUÁ HẠN"
+                            android:textColor="#410002"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cần xử lý ngay — tính tiền phạt"
+                            android:textColor="#BA1A1A"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="#BA1A1A"
+                        android:textSize="22sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/alertNearDue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="14dp"
+                    android:background="@drawable/bg_alert_orange"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_calendar"
+                        android:contentDescription="Sắp hết hạn" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvAlertNearDue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 phiếu sắp hết hạn"
+                            android:textColor="#3F2E00"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvAlertNearDueSub"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Trong 3 ngày tới"
+                            android:textColor="#B9651A"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="#B9651A"
+                        android:textSize="22sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/alertLowStock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="14dp"
+                    android:background="@drawable/bg_alert_blue"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_book"
+                        android:contentDescription="Sách sắp hết kho" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvAlertLowStock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 sách sắp hết kho"
+                            android:textColor="#001A41"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvAlertLowStockSub"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Còn ≤ 2 quyển"
+                            android:textColor="#1565C0"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="#1565C0"
+                        android:textSize="22sp" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!-- Danh mục yêu thích -->
             <TextView
                 android:layout_width="wrap_content"
@@ -207,17 +372,20 @@
                     android:paddingVertical="8dp">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_lavender"
+                        android:padding="16dp"
                         android:contentDescription="Sách"
-                        android:src="@drawable/ic_book" />
+                        android:src="@drawable/ic_book"
+                        android:tint="#1F2937" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="8dp"
                         android:text="Sách"
-                        android:textColor="#4B4B4B"
+                        android:textColor="#1F2937"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -232,17 +400,20 @@
                     android:paddingVertical="8dp">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:contentDescription="Độc giả"
-                        android:src="@drawable/ic_reader" />
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_lavender"
+                        android:padding="16dp"
+                        android:contentDescription="Bạn đọc"
+                        android:src="@drawable/ic_reader"
+                        android:tint="#1F2937" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Độc giả"
-                        android:textColor="#4B4B4B"
+                        android:layout_marginTop="8dp"
+                        android:text="Bạn đọc"
+                        android:textColor="#1F2937"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -257,17 +428,20 @@
                     android:paddingVertical="8dp">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_lavender"
+                        android:padding="16dp"
                         android:contentDescription="Liên hệ"
-                        android:src="@drawable/ic_contact" />
+                        android:src="@drawable/ic_contact"
+                        android:tint="#1F2937" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="8dp"
                         android:text="Liên hệ"
-                        android:textColor="#4B4B4B"
+                        android:textColor="#1F2937"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -290,17 +464,20 @@
                     android:paddingVertical="8dp">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:contentDescription="Mượn trả"
-                        android:src="@drawable/ic_borrow" />
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_lavender"
+                        android:padding="16dp"
+                        android:contentDescription="Mượn-Trả"
+                        android:src="@drawable/ic_borrow"
+                        android:tint="#1F2937" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Mượn trả"
-                        android:textColor="#4B4B4B"
+                        android:layout_marginTop="8dp"
+                        android:text="Mượn-Trả"
+                        android:textColor="#1F2937"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -315,17 +492,20 @@
                     android:paddingVertical="8dp">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_lavender"
+                        android:padding="16dp"
                         android:contentDescription="Báo cáo"
-                        android:src="@drawable/ic_report" />
+                        android:src="@drawable/ic_report"
+                        android:tint="#1F2937" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="8dp"
                         android:text="Báo cáo"
-                        android:textColor="#4B4B4B"
+                        android:textColor="#1F2937"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -340,17 +520,20 @@
                     android:paddingVertical="8dp">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:contentDescription="Nhân Viên"
-                        android:src="@drawable/ic_people" />
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_lavender"
+                        android:padding="16dp"
+                        android:contentDescription="Nhân viên"
+                        android:src="@drawable/ic_people"
+                        android:tint="#1F2937" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Nhân Viên"
-                        android:textColor="#4B4B4B"
+                        android:layout_marginTop="8dp"
+                        android:text="Nhân viên"
+                        android:textColor="#1F2937"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>

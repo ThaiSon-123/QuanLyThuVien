@@ -39,6 +39,12 @@ public class SachActivity extends AppCompatActivity {
     private static final int TAB_ALL = 0;
     private static final int TAB_CATEGORY = 1;
     private static final String ROLE_ADMIN = "admin";
+
+    /** Intent extras dùng cho Dashboard alert. */
+    public static final String EXTRA_FILTER = "filter";
+    public static final String FILTER_LOW_STOCK = "low_stock";
+
+    private boolean lowStockOnly = false;
     private static final String STATUS_ALL = "all";
     private static final String STATUS_CON = "con";
     private static final String STATUS_HET = "het";
@@ -87,6 +93,14 @@ public class SachActivity extends AppCompatActivity {
         setupTabs();
         setupFab();
         setupBottomNav();
+
+        // Áp filter Low Stock từ Dashboard alert
+        String f = getIntent().getStringExtra(EXTRA_FILTER);
+        if (FILTER_LOW_STOCK.equals(f)) {
+            lowStockOnly = true;
+            android.widget.Toast.makeText(this, "Lọc: sách sắp hết kho",
+                    android.widget.Toast.LENGTH_SHORT).show();
+        }
 
         selectTab(TAB_ALL);
     }
@@ -183,7 +197,12 @@ public class SachActivity extends AppCompatActivity {
     }
 
     private void setupFab() {
-        findViewById(R.id.fabAdd).setOnClickListener(v -> onAddClick());
+        android.view.View fab = findViewById(R.id.fabAdd);
+        fab.setOnClickListener(v -> onAddClick());
+        // NV không có quyền thêm sách → ẩn FAB cho gọn
+        if (!com.example.quanlythuvien.util.RoleHelper.isAdmin(this)) {
+            fab.setVisibility(android.view.View.GONE);
+        }
     }
 
     private void onAddClick() {
@@ -252,6 +271,13 @@ public class SachActivity extends AppCompatActivity {
                     list.add(s);
                 }
             }
+        }
+        // Filter "low stock" từ Intent
+        if (lowStockOnly) {
+            int threshold = com.example.quanlythuvien.db.CauHinhDao.getInstance(this).lowStockThreshold();
+            List<Sach> lowList = new ArrayList<>();
+            for (Sach s : list) if (s.soluong <= threshold) lowList.add(s);
+            list = lowList;
         }
         sachAdapter.submit(list);
         tvCount.setText(list.size() + " sản phẩm");

@@ -24,7 +24,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private LinearLayout layoutStep1, layoutStep2, layoutStep3;
     private TextView step1Dot, step2Dot, step3Dot;
 
-    private EditText edtUsername;
+    private EditText edtEmail;
     private TextView tvStep1Error, btnSendPin;
     private ProgressBar progressSend;
 
@@ -36,6 +36,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private TextView tvStep3Error, btnResetPassword;
 
     private String verifiedUsername;
+    private String verifiedEmail;
     private String generatedPin;
     private long pinExpiryTime;
 
@@ -57,7 +58,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         step2Dot    = findViewById(R.id.step2Dot);
         step3Dot    = findViewById(R.id.step3Dot);
 
-        edtUsername  = findViewById(R.id.edtUsername);
+        edtEmail     = findViewById(R.id.edtEmail);
         tvStep1Error = findViewById(R.id.tvStep1Error);
         btnSendPin   = findViewById(R.id.btnSendPin);
         progressSend = findViewById(R.id.progressSend);
@@ -85,20 +86,25 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
 
     private void onSendPin() {
-        String username = edtUsername.getText().toString().trim();
-        if (TextUtils.isEmpty(username)) {
-            showError(tvStep1Error, "Vui lòng nhập tên đăng nhập");
+        String email = edtEmail.getText().toString().trim();
+        if (TextUtils.isEmpty(email)) {
+            showError(tvStep1Error, "Vui lòng nhập email");
+            return;
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showError(tvStep1Error, "Email không hợp lệ");
             return;
         }
 
-        String email = userDao.findEmailByUsername(username);
-        if (email == null) {
-            showError(tvStep1Error, "Tài khoản không tồn tại hoặc chưa đăng ký email");
+        String username = userDao.findUsernameByEmail(email);
+        if (username == null) {
+            showError(tvStep1Error, "Email không tồn tại trong hệ thống");
             return;
         }
 
         hideError(tvStep1Error);
         verifiedUsername = username;
+        verifiedEmail = email;
         sendPinToEmail(email);
     }
 
@@ -184,8 +190,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void onResend() {
-        String email = userDao.findEmailByUsername(verifiedUsername);
-        if (email != null) sendPinToEmail(email);
+        if (verifiedEmail != null) sendPinToEmail(verifiedEmail);
     }
 
 

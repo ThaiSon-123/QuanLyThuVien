@@ -143,6 +143,12 @@ public class SachDetailActivity extends AppCompatActivity {
         findViewById(R.id.btnUpdate).setOnClickListener(v -> onUpdate());
         ivThumbPlaceholder.setOnClickListener(v -> pickImage());
         ivThumbCover.setOnClickListener(v -> pickImage());
+
+        // Ẩn nút Sửa/Xóa cho NV (vốn cũng đã check trong onDelete/onUpdate)
+        if (!isAdmin()) {
+            findViewById(R.id.btnDelete).setVisibility(android.view.View.GONE);
+            findViewById(R.id.btnUpdate).setVisibility(android.view.View.GONE);
+        }
     }
 
     private void setupBottomNav() {

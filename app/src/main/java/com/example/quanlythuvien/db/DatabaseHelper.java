@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "quanlythuvien.db";
-    public static final int DB_VERSION = 9;
+    public static final int DB_VERSION = 12;
 
     private static DatabaseHelper instance;
 
@@ -39,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TRIGGER IF EXISTS trg_muon_sach");
         db.execSQL("DROP TRIGGER IF EXISTS trg_tra_sach");
+        db.execSQL("DROP TABLE IF EXISTS CauHinh");
         db.execSQL("DROP TABLE IF EXISTS ChiTietTra");
         db.execSQL("DROP TABLE IF EXISTS PhieuTra");
         db.execSQL("DROP TABLE IF EXISTS ChiTietMuon");
@@ -100,6 +101,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "nv_id INTEGER, " +
                 "ngay_muon DATE, " +
                 "ngay_tra DATE, " +
+                "ngay_tra_goc DATE, " +
+                "lan_gia_han INTEGER DEFAULT 0, " +
                 "trangthai TEXT DEFAULT 'dangmuon', " +
                 "songaytre INTEGER DEFAULT 0, " +
                 "tienphat REAL DEFAULT 0, " +
@@ -128,6 +131,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "soluong INTEGER, " +
                 "FOREIGN KEY (pt_id) REFERENCES PhieuTra(pt_id), " +
                 "FOREIGN KEY (sach_id) REFERENCES Sach(sach_id))");
+
+        db.execSQL("CREATE TABLE CauHinh (" +
+                "key TEXT PRIMARY KEY, " +
+                "value TEXT NOT NULL)");
+        db.execSQL("INSERT INTO CauHinh (key, value) VALUES " +
+                "('fine_per_day', '500'), " +
+                "('default_borrow_days', '7'), " +
+                "('max_books_per_slip', '5'), " +
+                "('max_gia_han', '2'), " +
+                "('gia_han_days', '7'), " +
+                "('low_stock_threshold', '2'), " +
+                "('near_due_days', '3')");
     }
 
     private void createTriggers(SQLiteDatabase db) {
@@ -169,7 +184,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "('Phạm Tấn Lộc',      '0922222222', 'Bình Dương'), " +
                 "('Nguyễn Trọng Hiếu', '0933333333', 'Hà Nội'),    " +
                 "('Trần Thị Mai',      '0944444444', 'Đà Nẵng'),   " +
-                "('Nguyễn Văn Khoa',   '0955555555', 'Cần Thơ')");
+                "('Nguyễn Văn Khoa',   '0955555555', 'Cần Thơ'),   " +
+                "('Hoàng Minh Anh',    '0966666666', 'Hải Phòng'), " +
+                "('Vũ Thị Lan',        '0977777777', 'Nghệ An'),   " +
+                "('Đặng Quốc Bảo',     '0988888888', 'Huế'),       " +
+                "('Bùi Gia Hân',       '0999999999', 'Đồng Nai'),  " +
+                "('Phan Nhật Nam',     '0901234567', 'Khánh Hòa')");
 
         // ── Thể loại ───────────────────────────────────────────────────────────
         db.execSQL("INSERT INTO TheLoai (ten) VALUES " +
@@ -205,40 +225,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "('Đắc Nhân Tâm',                'Dale Carnegie',   'NXB Tổng Hợp',    2023,  5, 6), " +
                 "('7 Thói Quen Hiệu Quả',        'Stephen Covey',   'NXB Tổng Hợp',    2024,  4, 6)");
 
-        // ── Phiếu mượn ─────────────────────────────────────────────────────────
-        // PM1 – Lê Văn Long – đã trả
-        // PM2 – Phạm Tấn Lộc – đã trả
-        // PM3 – Nguyễn Trọng Hiếu – đã trả
-        // PM4 – Trần Thị Mai – đang mượn
-        // PM5 – Lê Văn Long – đang mượn
-        // PM6 – Nguyễn Văn Khoa – đang mượn
-        db.execSQL("INSERT INTO PhieuMuon (bd_id, nv_id, ngay_muon, ngay_tra, trangthai) VALUES " +
-                "(1, 2, '2026-01-10', '2026-01-24', 'datra'),    " +
-                "(2, 2, '2026-02-05', '2026-02-19', 'datra'),    " +
-                "(3, 1, '2026-03-10', '2026-03-24', 'datra'),    " +
-                "(4, 3, '2026-04-01', '2026-04-20', 'dangmuon'), " +
-                "(1, 1, '2026-04-15', '2026-05-05', 'dangmuon'), " +
-                "(5, 2, '2026-04-28', '2026-05-12', 'dangmuon')");
+        // ── Phiếu mượn tháng 5/2026 ───────────────────────────────────────────
+        // Hạn trả mặc định 7 ngày; PM12 đã gia hạn 1 lần thêm 7 ngày.
+        db.execSQL("INSERT INTO PhieuMuon " +
+                "(bd_id, nv_id, ngay_muon, ngay_tra, ngay_tra_goc, lan_gia_han, trangthai, songaytre, tienphat) VALUES " +
+                "(1,  2, '2026-05-01', '2026-05-08', '2026-05-08', 0, 'datra',    0,    0), " +
+                "(2,  2, '2026-05-02', '2026-05-09', '2026-05-09', 0, 'datra',    1,  500), " +
+                "(3,  1, '2026-05-03', '2026-05-10', '2026-05-10', 0, 'datra',    0,    0), " +
+                "(4,  3, '2026-05-04', '2026-05-11', '2026-05-11', 0, 'datra',    3, 1500), " +
+                "(5,  2, '2026-05-05', '2026-05-12', '2026-05-12', 0, 'datra',    0,    0), " +
+                "(6,  3, '2026-05-06', '2026-05-13', '2026-05-13', 0, 'datra',    2, 1000), " +
+                "(7,  1, '2026-05-08', '2026-05-15', '2026-05-15', 0, 'datra',    1,  500), " +
+                "(8,  2, '2026-05-10', '2026-05-17', '2026-05-17', 0, 'datra',    0,    0), " +
+                "(9,  3, '2026-05-12', '2026-05-19', '2026-05-19', 0, 'dangmuon', 0,    0), " +
+                "(10, 1, '2026-05-14', '2026-05-21', '2026-05-21', 0, 'dangmuon', 0,    0), " +
+                "(1,  2, '2026-05-15', '2026-05-22', '2026-05-22', 0, 'dangmuon', 0,    0), " +
+                "(6,  2, '2026-05-11', '2026-05-25', '2026-05-18', 1, 'dangmuon', 0,    0)");
 
         // ── Chi tiết mượn (trigger tự giảm soluong Sach) ──────────────────────
         db.execSQL("INSERT INTO ChiTietMuon (pm_id, sach_id, soluong) VALUES " +
-                "(1,  1, 1), (1,  4, 1), " +   // PM1 mượn: Ngữ Văn 12-T1, Nhà Giả Kim
-                "(2,  3, 1), (2, 15, 1), " +   // PM2 mượn: Dế Mèn, Đắc Nhân Tâm
-                "(3,  8, 1), (3,  9, 1), " +   // PM3 mượn: Java, Android
-                "(4,  2, 1), (4, 13, 1), " +   // PM4 mượn: Ngữ Văn 12-T2, Nghĩ Giàu
-                "(5,  6, 1), (5, 14, 1), " +   // PM5 mượn: Hóa Đại Cương, Kinh Tế Vi Mô
-                "(6, 11, 1), (6, 16, 1)");     // PM6 mượn: Đại Việt Sử Ký, 7 Thói Quen
+                "(1,   1, 1), (1,   4, 1), " +
+                "(2,   3, 1), (2,  15, 1), " +
+                "(3,   8, 1), (3,   9, 1), " +
+                "(4,   2, 1), (4,  13, 1), " +
+                "(5,   6, 1), (5,  14, 1), " +
+                "(6,  11, 1), (6,  16, 1), " +
+                "(7,   5, 1), (7,  10, 1), " +
+                "(8,   7, 1), (8,  12, 1), " +
+                "(9,   1, 1), (9,   8, 1), (9,  15, 1), " +
+                "(10,  4, 1), (10,  9, 1), " +
+                "(11,  2, 1), (11,  6, 1), (11, 13, 1), " +
+                "(12,  3, 1), (12, 11, 1), (12, 16, 1)");
 
-        // ── Phiếu trả (cho PM1, PM2, PM3) ─────────────────────────────────────
+        // ── Phiếu trả tháng 5/2026 (cho PM1..PM8) ─────────────────────────────
         db.execSQL("INSERT INTO PhieuTra (pm_id, ngay_tra, tienphat) VALUES " +
-                "(1, '2026-01-22', 0), " +
-                "(2, '2026-02-17', 0), " +
-                "(3, '2026-03-23', 0)");
+                "(1, '2026-05-07',    0), " +
+                "(2, '2026-05-10',  500), " +
+                "(3, '2026-05-10',    0), " +
+                "(4, '2026-05-14', 1500), " +
+                "(5, '2026-05-12',    0), " +
+                "(6, '2026-05-15', 1000), " +
+                "(7, '2026-05-16',  500), " +
+                "(8, '2026-05-17',    0)");
 
         // ── Chi tiết trả (trigger tự tăng soluong Sach) ───────────────────────
         db.execSQL("INSERT INTO ChiTietTra (pt_id, sach_id, soluong) VALUES " +
-                "(1,  1, 1), (1,  4, 1), " +   // PT1 trả: Ngữ Văn 12-T1, Nhà Giả Kim
-                "(2,  3, 1), (2, 15, 1), " +   // PT2 trả: Dế Mèn, Đắc Nhân Tâm
-                "(3,  8, 1), (3,  9, 1)");     // PT3 trả: Java, Android
+                "(1,  1, 1), (1,   4, 1), " +
+                "(2,  3, 1), (2,  15, 1), " +
+                "(3,  8, 1), (3,   9, 1), " +
+                "(4,  2, 1), (4,  13, 1), " +
+                "(5,  6, 1), (5,  14, 1), " +
+                "(6, 11, 1), (6,  16, 1), " +
+                "(7,  5, 1), (7,  10, 1), " +
+                "(8,  7, 1), (8,  12, 1)");
     }
 }

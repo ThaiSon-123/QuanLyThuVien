@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.quanlythuvien.model.ChiTietMuon;
 import com.example.quanlythuvien.model.PhieuTra;
+import com.example.quanlythuvien.util.FineCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,14 +91,41 @@ public class PhieuTraDao {
 
     public long insertWithDetails(int pmId, String ngayTra, java.util.List<ChiTietMuon> details) {
         SQLiteDatabase db = helper.getWritableDatabase();
+
+        // Lấy hạn trả từ PhieuMuon để tính tiền phạt nếu trễ
+        String ngayHanTra = null;
+        try (Cursor c = db.rawQuery(
+                "SELECT ngay_tra FROM PhieuMuon WHERE pm_id = ?",
+                new String[]{String.valueOf(pmId)})) {
+            if (c.moveToFirst()) ngayHanTra = c.getString(0);
+        }
+        int songaytre = FineCalculator.daysOverdue(ngayHanTra, ngayTra);
+        // Đọc đơn giá phạt từ bảng CauHinh (tránh phụ thuộc Context ở DAO)
+        double finePerDay = FineCalculator.FINE_PER_DAY;
+        try (Cursor cc = db.rawQuery(
+                "SELECT value FROM CauHinh WHERE key = ?",
+                new String[]{CauHinhDao.KEY_FINE_PER_DAY})) {
+            if (cc.moveToFirst()) {
+                try { finePerDay = Double.parseDouble(cc.getString(0)); }
+                catch (NumberFormatException ignored) { }
+            }
+        }
+        double tienphat = songaytre * finePerDay;
+
         db.beginTransaction();
         try {
             ContentValues cv = new ContentValues();
             cv.put("pm_id", pmId);
             cv.put("ngay_tra", ngayTra);
-            cv.put("tienphat", 0);
+            cv.put("tienphat", tienphat);
             long ptId = db.insert("PhieuTra", null, cv);
             if (ptId <= 0) return -1;
+
+            // Cập nhật ngược lại số ngày trễ & tiền phạt vào PhieuMuon để tiện thống kê
+            ContentValues upd = new ContentValues();
+            upd.put("songaytre", songaytre);
+            upd.put("tienphat", tienphat);
+            db.update("PhieuMuon", upd, "pm_id = ?", new String[]{String.valueOf(pmId)});
 
             for (ChiTietMuon ct : details) {
                 ContentValues d = new ContentValues();

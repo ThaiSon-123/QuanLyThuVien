@@ -43,6 +43,7 @@ public class BanDocDetailActivity extends AppCompatActivity {
     private TextView tvSdt;
     private TextView tvDiaChi;
     private TextView tvLichSuEmpty;
+    private TextView tvTongTienPhat;
 
     private int bdId;
 
@@ -75,6 +76,7 @@ public class BanDocDetailActivity extends AppCompatActivity {
         tvSdt = findViewById(R.id.tvSdt);
         tvDiaChi = findViewById(R.id.tvDiaChi);
         tvLichSuEmpty = findViewById(R.id.tvLichSuEmpty);
+        tvTongTienPhat = findViewById(R.id.tvTongTienPhat);
     }
 
     private void setupRecycler() {
@@ -131,6 +133,8 @@ public class BanDocDetailActivity extends AppCompatActivity {
 
         tvSachGiu.setText(String.valueOf(banDocDao.countSachGiu(bdId)));
         tvLanMuon.setText(String.valueOf(banDocDao.countLanMuon(bdId)));
+        double tongPhat = banDocDao.sumTienPhat(bdId);
+        tvTongTienPhat.setText(com.example.quanlythuvien.util.FineCalculator.formatVnd(tongPhat));
 
         List<PhieuMuon> ls = phieuMuonDao.listByBanDoc(bdId);
         adapter.submit(ls);
